@@ -2,32 +2,17 @@ import { useEffect, useState } from "react";
 import api from "../api";
 import toast, { Toaster } from "react-hot-toast";
 
-function Usuarios() {
-  const [usuarios, setUsuarios] = useState([]);
+function Roles() {
   const [roles, setRoles] = useState([]);
 
   const [form, setForm] = useState({
     nombre: "",
-    usuario: "",
-    correo: "",
-    contrasena: "",
-    id_rol: "",
-    estado: true,
+    descripcion: "",
+    status: true,
   });
 
   const [editando, setEditando] = useState(false);
   const [idActual, setIdActual] = useState(null);
-
-  // 🔥 Obtener usuarios
-  const getUsuarios = async () => {
-    try {
-      const res = await api.get("/usuarios");
-      setUsuarios(res.data.data);
-    } catch (error) {
-      console.log(error.response?.data);
-      toast.error("Error al cargar usuarios");
-    }
-  };
 
   // 🔥 Obtener roles
   const getRoles = async () => {
@@ -41,7 +26,6 @@ function Usuarios() {
   };
 
   useEffect(() => {
-    getUsuarios();
     getRoles();
   }, []);
 
@@ -49,12 +33,8 @@ function Usuarios() {
   const handleChange = (e) => {
     let value = e.target.value;
 
-    if (e.target.name === "estado") {
+    if (e.target.name === "status") {
       value = value === "1";
-    }
-
-    if (e.target.name === "id_rol") {
-      value = parseInt(value);
     }
 
     setForm({
@@ -67,34 +47,28 @@ function Usuarios() {
   const openCreate = () => {
     setForm({
       nombre: "",
-      usuario: "",
-      correo: "",
-      contrasena: "",
-      id_rol: roles.length > 0 ? roles[0].id_rol : "",
-      estado: true,
+      descripcion: "",
+      status: true,
     });
 
     setEditando(false);
 
-    const modal = document.getElementById("modal_user");
+    const modal = document.getElementById("modal_rol");
     if (modal) modal.showModal();
   };
 
   // 🧩 Abrir modal editar
-  const openEdit = (user) => {
+  const openEdit = (rol) => {
     setForm({
-      nombre: user.nombre,
-      usuario: user.usuario,
-      correo: user.correo,
-      contrasena: "",
-      id_rol: user.id_rol,
-      estado: user.estado,
+      nombre: rol.nombre,
+      descripcion: rol.descripcion || "",
+      status: rol.status,
     });
 
-    setIdActual(user.id_usuario);
+    setIdActual(rol.id_rol);
     setEditando(true);
 
-    const modal = document.getElementById("modal_user");
+    const modal = document.getElementById("modal_rol");
     if (modal) modal.showModal();
   };
 
@@ -103,40 +77,35 @@ function Usuarios() {
     e.preventDefault();
 
     try {
-      const dataToSend = { ...form };
-
-      // 🔥 No enviar contraseña vacía
-      if (!dataToSend.contrasena) {
-        delete dataToSend.contrasena;
-      }
-
       if (editando) {
-        await api.put(`/usuarios/${idActual}`, dataToSend);
-        toast.success("Usuario actualizado");
+        await api.put(`/roles/${idActual}`, form);
+        toast.success("Rol actualizado");
       } else {
-        await api.post("/usuarios", dataToSend);
-        toast.success("Usuario creado");
+        await api.post("/roles", form);
+        toast.success("Rol creado");
       }
 
-      const modal = document.getElementById("modal_user");
+      const modal = document.getElementById("modal_rol");
       if (modal) modal.close();
 
-      getUsuarios();
+      getRoles();
 
     } catch (error) {
       console.log(error.response?.data);
-      toast.error(error.response?.data?.message || "Error en operación");
+      toast.error(
+        error.response?.data?.message || "Error en operación"
+      );
     }
   };
 
   // 🧩 Eliminar
   const handleDelete = async (id) => {
-    if (!confirm("¿Eliminar usuario?")) return;
+    if (!confirm("¿Eliminar rol?")) return;
 
     try {
-      await api.delete(`/usuarios/${id}`);
-      toast.success("Usuario eliminado");
-      getUsuarios();
+      await api.delete(`/roles/${id}`);
+      toast.success("Rol eliminado");
+      getRoles();
     } catch (error) {
       console.log(error.response?.data);
       toast.error("Error al eliminar");
@@ -146,9 +115,9 @@ function Usuarios() {
   // 🧩 Toggle estado
   const toggleEstado = async (id) => {
     try {
-      await api.post(`/usuarios/${id}/toggle-estado`);
+      await api.post(`/roles/${id}/toggle-estado`);
       toast.success("Estado actualizado");
-      getUsuarios();
+      getRoles();
     } catch (error) {
       console.log(error.response?.data);
       toast.error("Error al cambiar estado");
@@ -159,13 +128,13 @@ function Usuarios() {
     <div className="p-6 bg-base-200 min-h-screen">
       <Toaster />
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-5xl mx-auto">
 
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Usuarios 👤</h1>
+          <h1 className="text-3xl font-bold">Roles 🔐</h1>
 
           <button className="btn btn-primary" onClick={openCreate}>
-            + Nuevo Usuario
+            + Nuevo Rol
           </button>
         </div>
 
@@ -176,28 +145,22 @@ function Usuarios() {
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                <th>Usuario</th>
-                <th>Correo</th>
-                <th>Rol</th>
+                <th>Descripción</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
 
             <tbody>
-              {usuarios.map((u) => (
-                <tr key={u.id_usuario}>
-                  <td>{u.id_usuario}</td>
-                  <td>{u.nombre}</td>
-                  <td>{u.usuario}</td>
-                  <td>{u.correo}</td>
-
-                  {/* 🔥 Rol dinámico */}
-                  <td>{u.rol?.nombre || "Sin rol"}</td>
+              {roles.map((r) => (
+                <tr key={r.id_rol}>
+                  <td>{r.id_rol}</td>
+                  <td>{r.nombre}</td>
+                  <td>{r.descripcion}</td>
 
                   <td>
-                    <span className={`badge ${u.estado ? "badge-success" : "badge-error"}`}>
-                      {u.estado ? "Activo" : "Inactivo"}
+                    <span className={`badge ${r.status ? "badge-success" : "badge-error"}`}>
+                      {r.status ? "Activo" : "Inactivo"}
                     </span>
                   </td>
 
@@ -205,21 +168,21 @@ function Usuarios() {
 
                     <button
                       className="btn btn-sm btn-info"
-                      onClick={() => openEdit(u)}
+                      onClick={() => openEdit(r)}
                     >
                       Editar
                     </button>
 
                     <button
                       className="btn btn-sm btn-warning"
-                      onClick={() => toggleEstado(u.id_usuario)}
+                      onClick={() => toggleEstado(r.id_rol)}
                     >
                       Estado
                     </button>
 
                     <button
                       className="btn btn-sm btn-error"
-                      onClick={() => handleDelete(u.id_usuario)}
+                      onClick={() => handleDelete(r.id_rol)}
                     >
                       Eliminar
                     </button>
@@ -232,42 +195,36 @@ function Usuarios() {
         </div>
 
         {/* MODAL */}
-        <dialog id="modal_user" className="modal">
+        <dialog id="modal_rol" className="modal">
           <div className="modal-box">
 
             <h3 className="font-bold text-lg mb-4">
-              {editando ? "Editar Usuario" : "Nuevo Usuario"}
+              {editando ? "Editar Rol" : "Nuevo Rol"}
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-3">
 
-              <input name="nombre" placeholder="Nombre" className="input input-bordered w-full" onChange={handleChange} value={form.nombre} />
-
-              <input name="usuario" placeholder="Usuario" className="input input-bordered w-full" onChange={handleChange} value={form.usuario} />
-
-              <input name="correo" placeholder="Correo" className="input input-bordered w-full" onChange={handleChange} value={form.correo} />
-
-              <input name="contrasena" placeholder="Contraseña" type="password" className="input input-bordered w-full" onChange={handleChange} />
-
-              {/* 🔥 SELECT DINÁMICO */}
-              <select
-                name="id_rol"
-                className="select select-bordered w-full"
+              <input
+                name="nombre"
+                placeholder="Nombre"
+                className="input input-bordered w-full"
                 onChange={handleChange}
-                value={form.id_rol}
-              >
-                {roles.map((rol) => (
-                  <option key={rol.id_rol} value={rol.id_rol}>
-                    {rol.nombre}
-                  </option>
-                ))}
-              </select>
+                value={form.nombre}
+              />
+
+              <input
+                name="descripcion"
+                placeholder="Descripción"
+                className="input input-bordered w-full"
+                onChange={handleChange}
+                value={form.descripcion}
+              />
 
               <select
-                name="estado"
+                name="status"
                 className="select select-bordered w-full"
                 onChange={handleChange}
-                value={form.estado ? "1" : "0"}
+                value={form.status ? "1" : "0"}
               >
                 <option value="1">Activo</option>
                 <option value="0">Inactivo</option>
@@ -281,7 +238,7 @@ function Usuarios() {
                 <button
                   type="button"
                   className="btn"
-                  onClick={() => document.getElementById("modal_user").close()}
+                  onClick={() => document.getElementById("modal_rol").close()}
                 >
                   Cancelar
                 </button>
@@ -297,4 +254,4 @@ function Usuarios() {
   );
 }
 
-export default Usuarios;
+export default Roles;

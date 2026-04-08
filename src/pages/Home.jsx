@@ -1,15 +1,39 @@
 import { useEffect, useState } from "react";
 import api from "../api";
+import toast from "react-hot-toast";
 
 function Home() {
   const [usuarios, setUsuarios] = useState(0);
+  const [ventas, setVentas] = useState(0);
+  const [productos, setProductos] = useState(0);
 
   useEffect(() => {
-    api.get("/usuarios")
-      .then(res => {
-        setUsuarios(res.data.usuarios.length);
-      })
-      .catch(err => console.error(err));
+    const getData = async () => {
+      try {
+        const resUsuarios = await api.get("/usuarios");
+        setUsuarios(resUsuarios.data.data.length);
+
+        try {
+          const resVentas = await api.get("/ventas");
+          setVentas(resVentas.data.data.length);
+        } catch {
+          setVentas(0);
+        }
+
+        try {
+          const resProductos = await api.get("/productos");
+          setProductos(resProductos.data.data.length);
+        } catch {
+          setProductos(0);
+        }
+
+      } catch (error) {
+        console.log(error.response?.data);
+        toast.error("Error al cargar datos del dashboard");
+      }
+    };
+
+    getData();
   }, []);
 
   return (
@@ -29,19 +53,19 @@ function Home() {
           </div>
         </div>
 
-        {/* Ventas (placeholder) */}
+        {/* Ventas */}
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="card-title">Ventas</h2>
-            <p className="text-4xl font-bold">0</p>
+            <p className="text-4xl font-bold">{ventas}</p>
           </div>
         </div>
 
-        {/* Productos (placeholder) */}
+        {/* Productos */}
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="card-title">Productos</h2>
-            <p className="text-4xl font-bold">0</p>
+            <p className="text-4xl font-bold">{productos}</p>
           </div>
         </div>
 
