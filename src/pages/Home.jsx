@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api";
 import toast from "react-hot-toast";
+import { Users, ShoppingCart, Package } from "lucide-react";
 
 function Home() {
   const [usuarios, setUsuarios] = useState(0);
@@ -26,10 +27,8 @@ function Home() {
         } catch {
           setProductos(0);
         }
-
-      } catch (error) {
-        console.log(error.response?.data);
-        toast.error("Error al cargar datos del dashboard");
+      } catch {
+        toast.error("Error al cargar datos");
       }
     };
 
@@ -37,40 +36,125 @@ function Home() {
   }, []);
 
   return (
-    <div className="p-6 bg-base-200 min-h-screen">
+    <>
+      <style>{`
+        .pg { font-family: 'Inter'; color: #e5e7eb; }
 
-      <h1 className="text-3xl font-bold mb-6">
-        Dashboard 📊
-      </h1>
+        .pg-header {
+          margin-bottom: 2rem;
+        }
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        .pg-title {
+          font-size: 1.6rem;
+          font-weight: 600;
+          color: #fff;
+        }
 
-        {/* Usuarios */}
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title">Usuarios</h2>
-            <p className="text-4xl font-bold">{usuarios}</p>
-          </div>
+        .pg-sub {
+          font-size: 13px;
+          color: #6b7280;
+        }
+
+        .pg-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 20px;
+        }
+
+        .pg-card {
+          background: #232633;
+          border: 1px solid #2f3441;
+          border-radius: 14px;
+          padding: 16px;
+          transition: all 0.2s ease;
+        }
+
+        .pg-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .pg-card-top {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 12px;
+        }
+
+        .pg-icon {
+          padding: 8px;
+          border-radius: 10px;
+          background: #181a20;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .pg-label {
+          font-size: 12px;
+          color: #6b7280;
+        }
+
+        .pg-value {
+          font-size: 2rem;
+          font-weight: bold;
+          color: #fff;
+          margin-top: 4px;
+        }
+
+        .users { color: #60a5fa; }
+        .ventas { color: #22c55e; }
+        .productos { color: #f59e0b; }
+
+      `}</style>
+
+      <div className="pg">
+
+        {/* HEADER */}
+        <div className="pg-header">
+          <h1 className="pg-title">Dashboard</h1>
+          <p className="pg-sub">Resumen general del sistema</p>
         </div>
 
-        {/* Ventas */}
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title">Ventas</h2>
-            <p className="text-4xl font-bold">{ventas}</p>
-          </div>
-        </div>
+        {/* CARDS */}
+        <div className="pg-grid">
 
-        {/* Productos */}
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title">Productos</h2>
-            <p className="text-4xl font-bold">{productos}</p>
+          {/* Usuarios */}
+          <div className="pg-card">
+            <div className="pg-card-top">
+              <div className="pg-icon users">
+                <Users size={18} />
+              </div>
+            </div>
+            <div className="pg-label">Usuarios</div>
+            <div className="pg-value">{usuarios}</div>
           </div>
+
+          {/* Ventas */}
+          <div className="pg-card">
+            <div className="pg-card-top">
+              <div className="pg-icon ventas">
+                <ShoppingCart size={18} />
+              </div>
+            </div>
+            <div className="pg-label">Ventas</div>
+            <div className="pg-value">{ventas}</div>
+          </div>
+
+          {/* Productos */}
+          <div className="pg-card">
+            <div className="pg-card-top">
+              <div className="pg-icon productos">
+                <Package size={18} />
+              </div>
+            </div>
+            <div className="pg-label">Productos</div>
+            <div className="pg-value">{productos}</div>
+          </div>
+
         </div>
 
       </div>
-    </div>
+    </>
   );
 }
 

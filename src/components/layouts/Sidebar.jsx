@@ -1,111 +1,137 @@
-import { Link, useLocation } from "react-router-dom";
-// Usaremos iconos simples de SVG para un look profesional sin librerías extra
-import { LayoutDashboard, Users, CircleDollarSign, Package, Settings, LogOut } from "lucide-react"; 
+import { Link, useLocation } from 'react-router-dom'
+import {
+    LayoutDashboard,
+    Users,
+    ShieldCheck,
+    Truck,
+    Tag,
+    Box,
+    ReceiptText,
+    Settings,
+    LogOut,
+} from 'lucide-react'
+
+const mainNav = [
+    { to: '/home', icon: LayoutDashboard, label: 'Dashboard' },
+    { to: '/usuarios', icon: Users, label: 'Usuarios' },
+    { to: '/roles', icon: ShieldCheck, label: 'Roles' },
+    { to: '/proveedores', icon: Truck, label: 'Proveedores' },
+    { to: '/categorias', icon: Tag, label: 'Categorías' },
+    { to: '/productos', icon: Box, label: 'Productos' },
+    { to: '/ventas', icon: ReceiptText, label: 'Ventas' },
+]
+
+const systemNav = [
+    { to: '/configuracion', icon: Settings, label: 'Configuración' },
+]
 
 export const Sidebar = ({ logout }) => {
-  const location = useLocation();
+    const location = useLocation()
+    const isActive = (path) => location.pathname === path
 
-  // Función para determinar si una ruta está activa
-  const isActive = (path) => location.pathname === path;
+    return (
+        <>
+            <style>{`
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
-  // Estilos base y activos para los enlaces
-  const navItemClasses = (path) => `
-    flex items-center gap-3.5 px-4 py-3 rounded-lg font-medium transition-all duration-200
-    ${isActive(path) 
-      ? "bg-primary text-primary-content shadow-md" 
-      : "hover:bg-base-200 text-base-content/80 hover:text-base-content"}
-  `;
+  .sb { width: 280px; height: 100vh; background: #1e2028; border-right: 1px solid #2a2d36; display: flex; flex-direction: column; font-family: 'Inter', sans-serif; flex-shrink: 0; }
 
-  return (
-    <div className="drawer-side z-20">
-      <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
-      
-      <aside className="menu p-5 w-72 min-h-full bg-base-100 border-r border-base-200 flex flex-col justify-between">
-        <div>
-          {/* Logo / Título con mejor espaciado */}
-          <div className="flex items-center gap-2 px-3 py-1 mb-10">
-            <span className="text-3xl">🍗</span>
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">Asadero</h2>
-              <p className="text-xs text-base-content/60 -mt-1">Panel de Control</p>
-            </div>
-          </div>
+  .sb-logo       { display: flex; align-items: center; gap: 14px; padding: 2rem 1.6rem 1.4rem; }
+  .sb-logo-icon  { width: 44px; height: 44px; border-radius: 12px; background: #2e3240; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid #3a3f50; }
+  .sb-brand      { font-size: 1.05rem; font-weight: 600; color: #e8eaf0; }
+  .sb-sub        { font-size: 11px; color: #4a5068; letter-spacing: .12em; text-transform: uppercase; margin-top: 3px; }
 
-          {/* Navegación Principal */}
-          <nav className="space-y-2">
-            <p className="px-4 text-xs font-semibold text-base-content/50 uppercase tracking-wider">Menú Principal</p>
-            
-            <Link to="/home" className={navItemClasses("/home")}>
-              <LayoutDashboard size={22} className={isActive("/home") ? "opacity-100" : "opacity-70"} />
-              Dashboard
-            </Link>
+  .sb-sep        { height: 1px; background: #272b36; margin: 0.3rem 1.4rem 1rem; }
 
-            <Link to="/usuarios" className={navItemClasses("/usuarios")}>
-              <Users size={22} className={isActive("/usuarios") ? "opacity-100" : "opacity-70"} />
-              Usuarios
-            </Link>
+  .sb-lbl        { font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: #3e4557; padding: 0 1.5rem 0.5rem; }
 
-            <Link to="/roles" className={navItemClasses("/roles")}>
-              <CircleDollarSign size={22} className={isActive("/roles") ? "opacity-100" : "opacity-70"} />
-              Roles
-            </Link>
+  .sb-nav        { display: flex; flex-direction: column; gap: 4px; padding: 0 0.9rem; }
 
-            <Link to="/proveedores" className={navItemClasses("/proveedores")}>
-              <Package size={22} className={isActive("/proveedores") ? "opacity-100" : "opacity-70"} />
-              Proveedores
-            </Link>
+  .sb-a          { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px; font-size: 14px; font-weight: 400; color: #6b7280; text-decoration: none; transition: all .15s ease; }
+  .sb-a:hover    { background: #252832; color: #c4c8d4; }
+  .sb-a.on       { background: #2a2f3e; color: #e8eaf0; font-weight: 500; }
 
-            <Link to="/categorias" className={navItemClasses("/categorias")}>
-              <CircleDollarSign size={22} className={isActive("/categorias") ? "opacity-100" : "opacity-70"} />
-              Categorías
-            </Link>
+  .sb-a .ico     { flex-shrink: 0; color: #3e4557; transition: color .15s; }
+  .sb-a:hover .ico { color: #6b7280; }
+  .sb-a.on .ico  { color: #818cf8; }
 
-            <Link to="/productos" className={navItemClasses("/productos")}>
-              <CircleDollarSign size={22} className={isActive("/productos") ? "opacity-100" : "opacity-70"} />
-              Productos
-            </Link>
+  .sb-foot       { margin-top: auto; border-top: 1px solid #272b36; padding: 1.4rem; }
 
-            <Link to="/ventas" className={navItemClasses("/ventas")}>
-              <CircleDollarSign size={22} className={isActive("/ventas") ? "opacity-100" : "opacity-70"} />
-              Ventas
-            </Link>
+  .sb-user       { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+  .sb-avatar     { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; border: 1.5px solid #2e3240; }
+  .sb-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-          </nav>
+  .sb-uname      { font-size: 14px; font-weight: 500; color: #c4c8d4; }
+  .sb-uemail     { font-size: 11px; color: #3e4557; margin-top: 2px; }
 
-          {/* Separador y sección de Configuración */}
-          <div className="divider my-8"></div>
-          
-          <nav className="space-y-2">
-            <p className="px-4 text-xs font-semibold text-base-content/50 uppercase tracking-wider">Sistema</p>
-            <Link to="#" className={navItemClasses("/configuracion")}>
-              <Settings size={22} className={isActive("/configuracion") ? "opacity-100" : "opacity-70"} />
-              Configuración
-            </Link>
-          </nav>
-        </div>
+  .sb-out        { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; border-radius: 10px; background: transparent; border: 1px solid #2a2d36; cursor: pointer; font-size: 13px; font-weight: 500; color: #4a5068; transition: all .15s; }
 
-        {/* Sección de usuario / Botón de cerrar sesión al final */}
-        <div className="mt-auto border-t border-base-200 pt-6">
-          <div className="flex items-center gap-3 px-3 mb-4">
-            <div className="avatar placeholder">
-              <div className="bg-neutral text-neutral-content rounded-full w-12">
-                <span>AD</span>
-              </div>
-            </div>
-            <div>
-              <p className="font-semibold">Administrador</p>
-              <p className="text-sm text-base-content/60">admin@asadero.com</p>
-            </div>
-          </div>
-          <button 
-            className="btn btn-outline btn-error w-full gap-3 justify-center rounded-lg"
-            onClick={logout}
-          >
-            <LogOut size={20} />
-            Cerrar Sesión
-          </button>
-        </div>
-      </aside>
-    </div>
-  );
-};
+  .sb-out:hover  { background: #2a1f22; border-color: #4a2530; color: #f87171; }
+  .sb-out:hover .out-ico { color: #f87171; }
+
+  .out-ico       { color: #3e4557; transition: color .15s; }
+`}</style>
+
+            <aside className="sb hidden lg:flex">
+                <div className="sb-logo">
+                    <div className="sb-logo-icon">🔥</div>
+                    <div>
+                        <p className="sb-brand">Asadero La 75</p>
+                        <p className="sb-sub">Panel Admin</p>
+                    </div>
+                </div>
+
+                <div className="sb-sep" />
+
+                <p className="sb-lbl">Menú</p>
+                <nav className="sb-nav">
+                    {mainNav.map(({ to, icon: Icon, label }) => (
+                        <Link
+                            key={to}
+                            to={to}
+                            className={`sb-a ${isActive(to) ? 'on' : ''}`}
+                        >
+                            <Icon size={15} className="ico" />
+                            {label}
+                        </Link>
+                    ))}
+                </nav>
+
+                <div className="sb-sep" style={{ marginTop: '0.8rem' }} />
+
+                <p className="sb-lbl">Sistema</p>
+                <nav className="sb-nav">
+                    {systemNav.map(({ to, icon: Icon, label }) => (
+                        <Link
+                            key={to}
+                            to={to}
+                            className={`sb-a ${isActive(to) ? 'on' : ''}`}
+                        >
+                            <Icon size={18} className="ico" />
+                            {label}
+                        </Link>
+                    ))}
+                </nav>
+
+                <div className="sb-foot">
+                    <div className="sb-user">
+                        <div className="sb-avatar">
+                            <img
+                                src="https://api.dicebear.com/8.x/notionists/svg?seed=admin"
+                                alt="avatar"
+                            />
+                        </div>
+                        <div>
+                            <p className="sb-uname">Administrador</p>
+                            <p className="sb-uemail">admin@asadero.com</p>
+                        </div>
+                    </div>
+                    <button className="sb-out" onClick={logout}>
+                        <LogOut size={16} className="out-ico" />
+                        Cerrar sesión
+                    </button>
+                </div>
+            </aside>
+        </>
+    )
+}

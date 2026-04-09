@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import api from "../api";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { Eye, EyeOff, Lock, User, LogIn, Loader2 } from "lucide-react";
 
 function Login() {
@@ -15,125 +15,215 @@ function Login() {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const res = await api.post("/login", {
-        login: data.login,
-        password: data.password
-      });
-
+      const res = await api.post("/login", data);
       localStorage.setItem("token", res.data.access_token);
-      toast.success("¡Bienvenido de nuevo!");
-
-      setTimeout(() => {
-        navigate("/home");
-      }, 1000);
-    } catch (error) {
-      toast.error("Credenciales incorrectas. Intenta de nuevo.");
+      toast.success("Bienvenido 🔥");
+      navigate("/home");
+    } catch {
+      toast.error("Credenciales incorrectas");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-primary/20 via-base-100 to-secondary/20 p-4">
-      <Toaster position="top-center" reverseOrder={false} />
+    <>
+      <style>{`
+        .pg-login {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, #0f1117, #1a1d29);
+          font-family: 'Inter';
+          color: #e5e7eb;
+        }
 
-      <div className="card w-full max-w-md bg-base-100 shadow-2xl border border-base-300 overflow-hidden">
-        {/* Decoración superior estética */}
-        <div className="h-2 bg-gradient-to-r from-primary to-secondary w-full"></div>
-        
-        <div className="card-body p-8 md:p-10">
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 text-primary">
-              <span className="text-4xl">🍗</span>
-            </div>
-            <h2 className="text-3xl font-black tracking-tight text-center">
-              Asadero La 75
-            </h2>
-            <p className="text-base-content/60 text-sm mt-2 font-medium">
-              Gestión Administrativa
-            </p>
+        .pg-card {
+          width: 100%;
+          max-width: 380px;
+          background: #232633;
+          border: 1px solid #2f3441;
+          border-radius: 16px;
+          padding: 28px;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .pg-header {
+          text-align: center;
+          margin-bottom: 24px;
+        }
+
+        .pg-logo {
+          width: 50px;
+          height: 50px;
+          border-radius: 12px;
+          background: #6366f1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+          margin: 0 auto 10px;
+        }
+
+        .pg-title {
+          font-size: 1.4rem;
+          font-weight: 600;
+        }
+
+        .pg-sub {
+          font-size: 12px;
+          color: #6b7280;
+        }
+
+        .pg-field {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          margin-bottom: 14px;
+        }
+
+        .pg-label {
+          font-size: 11px;
+          color: #6b7280;
+        }
+
+        .pg-input-wrap {
+          position: relative;
+        }
+
+        .pg-input {
+          width: 100%;
+          padding: 10px 36px;
+          border-radius: 10px;
+          border: 1px solid #2f3441;
+          background: #181a20;
+          color: white;
+          transition: all 0.2s;
+        }
+
+        .pg-input:focus {
+          outline: none;
+          border-color: #6366f1;
+          background: #1e2028;
+        }
+
+        .pg-icon-left {
+          position: absolute;
+          left: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #6b7280;
+        }
+
+        .pg-icon-right {
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          cursor: pointer;
+          color: #6b7280;
+        }
+
+        .pg-error {
+          font-size: 11px;
+          color: #f87171;
+        }
+
+        .pg-btn {
+          margin-top: 10px;
+          padding: 12px;
+          border-radius: 10px;
+          border: none;
+          background: #6366f1;
+          color: white;
+          font-weight: 500;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          transition: all 0.2s;
+        }
+
+        .pg-btn:hover {
+          background: #4f46e5;
+        }
+
+        .pg-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .pg-footer {
+          margin-top: 18px;
+          text-align: center;
+          font-size: 11px;
+          color: #6b7280;
+        }
+
+      `}</style>
+
+      <div className="pg-login">
+        <div className="pg-card">
+
+          <div className="pg-header">
+            <div className="pg-logo">🍗</div>
+            <div className="pg-title">Asadero La 75</div>
+            <div className="pg-sub">Inicia sesión para continuar</div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Campo Usuario */}
-            <div className="form-control">
-              <label className="label py-1">
-                <span className="label-text font-bold text-xs uppercase tracking-widest opacity-70">Usuario</span>
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-base-content/40">
-                  <User size={18} />
-                </span>
+          <form onSubmit={handleSubmit(onSubmit)}>
+
+            {/* Usuario */}
+            <div className="pg-field">
+              <label className="pg-label">Usuario</label>
+              <div className="pg-input-wrap">
+                <User size={16} className="pg-icon-left"/>
                 <input
-                  type="text"
-                  placeholder="Ingresa tu usuario"
-                  className={`input input-bordered w-full pl-10 bg-base-200/30 focus:bg-base-100 transition-all ${errors.login ? "input-error" : "focus:input-primary"}`}
-                  {...register("login", { required: "El usuario es obligatorio" })}
+                  className="pg-input"
+                  placeholder="Tu usuario"
+                  {...register("login", { required: "Requerido" })}
                 />
               </div>
-              {errors.login && (
-                <label className="label p-0 mt-1">
-                  <span className="text-error text-xs font-medium">{errors.login.message}</span>
-                </label>
-              )}
+              {errors.login && <span className="pg-error">{errors.login.message}</span>}
             </div>
 
-            {/* Campo Contraseña */}
-            <div className="form-control">
-              <label className="label py-1 flex justify-between">
-                <span className="label-text font-bold text-xs uppercase tracking-widest opacity-70">Contraseña</span>
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-base-content/40">
-                  <Lock size={18} />
-                </span>
+            {/* Password */}
+            <div className="pg-field">
+              <label className="pg-label">Contraseña</label>
+              <div className="pg-input-wrap">
+                <Lock size={16} className="pg-icon-left"/>
                 <input
                   type={showPass ? "text" : "password"}
+                  className="pg-input"
                   placeholder="••••••••"
-                  className={`input input-bordered w-full px-10 bg-base-200/30 focus:bg-base-100 transition-all ${errors.password ? "input-error" : "focus:input-primary"}`}
-                  {...register("password", { required: "La contraseña es obligatoria" })}
+                  {...register("password", { required: "Requerido" })}
                 />
-                <button
-                  type="button"
+                <span
+                  className="pg-icon-right"
                   onClick={() => setShowPass(!showPass)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-base-content/40 hover:text-primary transition-colors"
                 >
-                  {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+                  {showPass ? <EyeOff size={16}/> : <Eye size={16}/>}
+                </span>
               </div>
-              {errors.password && (
-                <label className="label p-0 mt-1">
-                  <span className="text-error text-xs font-medium">{errors.password.message}</span>
-                </label>
-              )}
+              {errors.password && <span className="pg-error">{errors.password.message}</span>}
             </div>
 
-            {/* Botón de Ingreso */}
-            <div className="form-control mt-6">
-              <button
-                className={`btn btn-primary w-full shadow-lg shadow-primary/20 gap-2 h-12 text-base normal-case ${loading ? "loading" : ""}`}
-                disabled={loading}
-              >
-                {!loading && <LogIn size={20} />}
-                {loading ? (
-                  <>
-                    <Loader2 className="animate-spin" size={20} />
-                    Verificando...
-                  </>
-                ) : "Iniciar Sesión"}
-              </button>
-            </div>
+            <button className="pg-btn" disabled={loading}>
+              {loading ? <Loader2 className="animate-spin" size={16}/> : <LogIn size={16}/>}
+              {loading ? "Entrando..." : "Iniciar sesión"}
+            </button>
+
           </form>
 
-          {/* Footer del login */}
-          <div className="mt-8 text-center border-t border-base-200 pt-6">
-            <p className="text-xs text-base-content/50">
-              Desarrollado para la gestión interna de <strong>Asadero La 75</strong>
-            </p>
+          <div className="pg-footer">
+            Sistema interno • Asadero La 75
           </div>
+
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

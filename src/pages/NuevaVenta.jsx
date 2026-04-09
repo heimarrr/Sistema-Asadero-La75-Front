@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import api from "../api";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import { Plus, Trash2, ShoppingCart, X } from "lucide-react";
 
 function NuevaVenta() {
   const [productos, setProductos] = useState([]);
   const [carrito, setCarrito] = useState([]);
   const [productoSeleccionado, setProductoSeleccionado] = useState("");
   const [cantidad, setCantidad] = useState(1);
-  const [loading, setLoading] = useState(false);
   const [busqueda, setBusqueda] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // 🔥 Cargar productos disponibles
   useEffect(() => {
     const getProductos = async () => {
       try {
@@ -23,57 +24,45 @@ function NuevaVenta() {
     getProductos();
   }, []);
 
-  // Producto seleccionado actual
   const productoActual = productos.find(
     (p) => p.id_producto === parseInt(productoSeleccionado)
   );
 
-  // Filtrar productos por búsqueda
   const productosFiltrados = productos.filter((p) =>
     p.nombre.toLowerCase().includes(busqueda.toLowerCase())
   );
 
-  // ➕ Agregar al carrito
   const agregarAlCarrito = () => {
-    if (!productoSeleccionado) {
-      toast.error("Selecciona un producto");
-      return;
-    }
+    if (!productoSeleccionado) return toast.error("Selecciona un producto");
 
     const cant = parseInt(cantidad);
-    if (cant < 1) {
-      toast.error("La cantidad debe ser al menos 1");
-      return;
-    }
+    if (cant < 1) return toast.error("Cantidad inválida");
 
     if (productoActual && cant > productoActual.stock_actual) {
-      toast.error(`Stock insuficiente. Disponible: ${productoActual.stock_actual}`);
-      return;
+      return toast.error(`Stock: ${productoActual.stock_actual}`);
     }
 
-    // Si ya está en el carrito, sumar cantidad
     const existe = carrito.find(
-      (item) => item.id_producto === parseInt(productoSeleccionado)
+      (i) => i.id_producto === parseInt(productoSeleccionado)
     );
 
     if (existe) {
       const nuevaCantidad = existe.cantidad + cant;
-      if (productoActual && nuevaCantidad > productoActual.stock_actual) {
-        toast.error(`Stock insuficiente. Disponible: ${productoActual.stock_actual}`);
-        return;
+      if (nuevaCantidad > productoActual.stock_actual) {
+        return toast.error("Stock insuficiente");
       }
+
       setCarrito(
-        carrito.map((item) =>
-          item.id_producto === parseInt(productoSeleccionado)
+        carrito.map((i) =>
+          i.id_producto === existe.id_producto
             ? {
-                ...item,
+                ...i,
                 cantidad: nuevaCantidad,
-                subtotal: item.precio_unitario * nuevaCantidad,
+                subtotal: i.precio_unitario * nuevaCantidad,
               }
-            : item
+            : i
         )
       );
-      toast.success("Cantidad actualizada");
     } else {
       setCarrito([
         ...carrito,
@@ -86,308 +75,290 @@ function NuevaVenta() {
           stock_actual: productoActual.stock_actual,
         },
       ]);
-      toast.success("Producto agregado");
     }
 
-    // Reset
     setProductoSeleccionado("");
     setCantidad(1);
     setBusqueda("");
   };
 
-  // 🗑️ Quitar del carrito
-  const quitarDelCarrito = (id_producto) => {
-    setCarrito(carrito.filter((item) => item.id_producto !== id_producto));
+  const quitar = (id) => {
+    setCarrito(carrito.filter((i) => i.id_producto !== id));
   };
 
-  // Cambiar cantidad directamente en el carrito
-  const cambiarCantidadCarrito = (id_producto, nuevaCantidad) => {
-    const cant = parseInt(nuevaCantidad);
+  const cambiarCantidad = (id, val) => {
+    const cant = parseInt(val);
     if (cant < 1) return;
 
-    const item = carrito.find((i) => i.id_producto === id_producto);
-    if (item && cant > item.stock_actual) {
-      toast.error(`Stock insuficiente. Disponible: ${item.stock_actual}`);
-      return;
+    const item = carrito.find((i) => i.id_producto === id);
+    if (cant > item.stock_actual) {
+      return toast.error("Stock insuficiente");
     }
 
     setCarrito(
-      carrito.map((item) =>
-        item.id_producto === id_producto
-          ? { ...item, cantidad: cant, subtotal: item.precio_unitario * cant }
-          : item
+      carrito.map((i) =>
+        i.id_producto === id
+          ? { ...i, cantidad: cant, subtotal: i.precio_unitario * cant }
+          : i
       )
     );
   };
 
-  // 💰 Total del carrito
-  const total = carrito.reduce((acc, item) => acc + item.subtotal, 0);
+  const total = carrito.reduce((acc, i) => acc + i.subtotal, 0);
 
-  // ✅ Confirmar venta
   const confirmarVenta = async () => {
-    if (carrito.length === 0) {
-      toast.error("Agrega al menos un producto");
-      return;
-    }
-
     setLoading(true);
     try {
-      const payload = {
-        productos: carrito.map((item) => ({
-          id_producto: item.id_producto,
-          cantidad: item.cantidad,
+      await api.post("/ventas", {
+        productos: carrito.map((i) => ({
+          id_producto: i.id_producto,
+          cantidad: i.cantidad,
         })),
-      };
+      });
 
-      await api.post("/ventas", payload);
-      toast.success("¡Venta registrada correctamente! 🎉");
+      toast.success("Venta registrada 🔥");
       setCarrito([]);
-
-      // Redirigir al historial después de 1.5s
-      setTimeout(() => {
-        window.location.href = "/ventas";
-      }, 1500);
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Error al registrar la venta");
+      setModalOpen(false);
+    } catch {
+      toast.error("Error al registrar");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 bg-base-200 min-h-screen">
-      <Toaster />
+    <>
+      <style>{`
+        .pg { font-family: 'Inter'; color: #e5e7eb; }
 
-      <div className="max-w-7xl mx-auto">
+        .pg-header {
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          margin-bottom:2rem;
+        }
 
-        {/* HEADER */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Nueva Venta 🛒</h1>
-          <a href="/ventas" className="btn btn-outline">
-            ← Historial
-          </a>
+        .pg-title { font-size:1.6rem; font-weight:600; color:#fff; }
+
+        .pg-grid {
+          display:grid;
+          grid-template-columns: 1fr 1fr;
+          gap:20px;
+        }
+
+        .pg-card {
+          background:#232633;
+          border:1px solid #2f3441;
+          border-radius:14px;
+          padding:16px;
+          display:flex;
+          flex-direction:column;
+          gap:12px;
+        }
+
+        .pg-input, .pg-select {
+          padding:10px;
+          border-radius:8px;
+          border:1px solid #2f3441;
+          background:#181a20;
+          color:white;
+          width:100%;
+        }
+
+        .pg-btn {
+          padding:10px;
+          border-radius:8px;
+          border:none;
+          cursor:pointer;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:6px;
+        }
+
+        .pg-btn-primary { background:#6366f1; }
+        .pg-btn-success { background:#22c55e; }
+        .pg-btn-danger { background:#ef4444; }
+
+        .pg-table { width:100%; border-collapse:collapse; }
+
+        .pg-table th {
+          text-align:left;
+          font-size:12px;
+          color:#6b7280;
+        }
+
+        .pg-table td {
+          padding:10px;
+          border-top:1px solid #2f3441;
+        }
+
+        .pg-total {
+          display:flex;
+          justify-content:space-between;
+          font-size:1.2rem;
+          font-weight:600;
+          margin-top:10px;
+        }
+
+        .pg-overlay {
+          position:fixed;
+          inset:0;
+          background:rgba(0,0,0,.6);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+        }
+
+        .pg-modal {
+          background:#232633;
+          border-radius:14px;
+          width:400px;
+          padding:16px;
+        }
+
+        .pg-modal-header {
+          display:flex;
+          justify-content:space-between;
+          margin-bottom:10px;
+        }
+
+      `}</style>
+
+      <div className="pg">
+        <div className="pg-header">
+          <h1 className="pg-title">Nueva Venta</h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="pg-grid">
 
-          {/* ─── PANEL IZQUIERDO: Selector de productos ─── */}
-          <div className="bg-base-100 rounded-xl shadow p-6 flex flex-col gap-4">
-            <h2 className="text-xl font-semibold">Agregar Producto</h2>
+          {/* IZQUIERDA */}
+          <div className="pg-card">
+            <h3>Agregar producto</h3>
 
-            {/* Búsqueda */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">Buscar producto</span>
-              </label>
-              <input
-                type="text"
-                className="input input-bordered w-full"
-                placeholder="Escribe el nombre..."
-                value={busqueda}
-                onChange={(e) => {
-                  setBusqueda(e.target.value);
-                  setProductoSeleccionado("");
-                }}
-              />
-            </div>
+            <input
+              className="pg-input"
+              placeholder="Buscar producto..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+            />
 
-            {/* Select de producto */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">Seleccionar</span>
-              </label>
-              <select
-                className="select select-bordered w-full"
-                value={productoSeleccionado}
-                onChange={(e) => setProductoSeleccionado(e.target.value)}
-              >
-                <option value="">-- Selecciona un producto --</option>
-                {productosFiltrados.map((p) => (
-                  <option
-                    key={p.id_producto}
-                    value={p.id_producto}
-                    disabled={p.stock_actual === 0}
-                  >
-                    {p.nombre} — ${Number(p.precio_venta).toLocaleString()} (Stock: {p.stock_actual})
-                  </option>
-                ))}
-              </select>
-            </div>
+            <select
+              className="pg-select"
+              value={productoSeleccionado}
+              onChange={(e) => setProductoSeleccionado(e.target.value)}
+            >
+              <option value="">Seleccionar</option>
+              {productosFiltrados.map(p => (
+                <option key={p.id_producto} value={p.id_producto}>
+                  {p.nombre} - ${p.precio_venta}
+                </option>
+              ))}
+            </select>
 
-            {/* Info del producto seleccionado */}
             {productoActual && (
-              <div className="alert alert-info">
-                <div>
-                  <p className="font-bold">{productoActual.nombre}</p>
-                  <p>Precio: ${Number(productoActual.precio_venta).toLocaleString()}</p>
-                  <p>Stock disponible: <strong>{productoActual.stock_actual}</strong></p>
-                </div>
+              <div style={{fontSize:"13px", color:"#9ca3af"}}>
+                Stock: {productoActual.stock_actual}
               </div>
             )}
 
-            {/* Cantidad */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">Cantidad</span>
-              </label>
-              <input
-                type="number"
-                className="input input-bordered w-full"
-                min="1"
-                max={productoActual?.stock_actual || 9999}
-                value={cantidad}
-                onChange={(e) => setCantidad(e.target.value)}
-              />
-            </div>
+            <input
+              type="number"
+              className="pg-input"
+              value={cantidad}
+              onChange={(e) => setCantidad(e.target.value)}
+            />
 
-            <button
-              className="btn btn-primary w-full"
-              onClick={agregarAlCarrito}
-              disabled={!productoSeleccionado}
-            >
-              ➕ Agregar al carrito
+            <button className="pg-btn pg-btn-primary" onClick={agregarAlCarrito}>
+              <Plus size={16}/> Agregar
             </button>
           </div>
 
-          {/* ─── PANEL DERECHO: Carrito ─── */}
-          <div className="bg-base-100 rounded-xl shadow p-6 flex flex-col gap-4">
-            <h2 className="text-xl font-semibold">
-              Carrito{" "}
-              <span className="badge badge-primary ml-1">{carrito.length}</span>
-            </h2>
+          {/* DERECHA */}
+          <div className="pg-card">
+            <h3>Carrito ({carrito.length})</h3>
 
             {carrito.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-48 text-gray-400">
-                <span className="text-5xl mb-3">🛒</span>
-                <p>El carrito está vacío</p>
-              </div>
+              <p style={{color:"#6b7280"}}>Carrito vacío</p>
             ) : (
               <>
-                {/* Lista de productos en carrito */}
-                <div className="overflow-x-auto">
-                  <table className="table table-sm">
-                    <thead>
-                      <tr>
-                        <th>Producto</th>
-                        <th>Precio</th>
-                        <th>Cant.</th>
-                        <th>Subtotal</th>
-                        <th></th>
+                <table className="pg-table">
+                  <thead>
+                    <tr>
+                      <th>Producto</th>
+                      <th>Cant</th>
+                      <th>Subtotal</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {carrito.map(i => (
+                      <tr key={i.id_producto}>
+                        <td>{i.nombre}</td>
+                        <td>
+                          <input
+                            type="number"
+                            value={i.cantidad}
+                            className="pg-input"
+                            style={{width:"60px"}}
+                            onChange={(e)=>cambiarCantidad(i.id_producto,e.target.value)}
+                          />
+                        </td>
+                        <td>${i.subtotal}</td>
+                        <td>
+                          <button onClick={()=>quitar(i.id_producto)}>
+                            <Trash2 size={14}/>
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {carrito.map((item) => (
-                        <tr key={item.id_producto}>
-                          <td className="font-medium">{item.nombre}</td>
-                          <td>${Number(item.precio_unitario).toLocaleString()}</td>
-                          <td>
-                            <input
-                              type="number"
-                              className="input input-bordered input-xs w-16"
-                              min="1"
-                              max={item.stock_actual}
-                              value={item.cantidad}
-                              onChange={(e) =>
-                                cambiarCantidadCarrito(item.id_producto, e.target.value)
-                              }
-                            />
-                          </td>
-                          <td className="font-semibold">
-                            ${Number(item.subtotal).toLocaleString()}
-                          </td>
-                          <td>
-                            <button
-                              className="btn btn-xs btn-error btn-outline"
-                              onClick={() => quitarDelCarrito(item.id_producto)}
-                            >
-                              ✕
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                    ))}
+                  </tbody>
+                </table>
+
+                <div className="pg-total">
+                  <span>Total</span>
+                  <span>${total}</span>
                 </div>
 
-                {/* Divider */}
-                <div className="divider my-0" />
-
-                {/* Total */}
-                <div className="flex justify-between items-center text-2xl font-bold">
-                  <span>Total:</span>
-                  <span className="text-primary">${Number(total).toLocaleString()}</span>
-                </div>
-
-                {/* Botones */}
-                <div className="flex gap-3 mt-2">
-                  <button
-                    className="btn btn-outline btn-error flex-1"
-                    onClick={() => setCarrito([])}
-                  >
-                    Limpiar
-                  </button>
-
-                  <button
-                    className="btn btn-success flex-1"
-                    onClick={() =>
-                      document.getElementById("modal_confirmar").showModal()
-                    }
-                    disabled={loading}
-                  >
-                    ✅ Confirmar Venta
-                  </button>
-                </div>
+                <button
+                  className="pg-btn pg-btn-success"
+                  onClick={()=>setModalOpen(true)}
+                >
+                  Confirmar venta
+                </button>
               </>
             )}
           </div>
         </div>
-      </div>
 
-      {/* ✅ MODAL CONFIRMAR VENTA */}
-      <dialog id="modal_confirmar" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg mb-4">Confirmar Venta</h3>
-
-          <div className="space-y-1 mb-4">
-            {carrito.map((item) => (
-              <div key={item.id_producto} className="flex justify-between text-sm">
-                <span>{item.nombre} x{item.cantidad}</span>
-                <span>${Number(item.subtotal).toLocaleString()}</span>
+        {/* MODAL */}
+        {modalOpen && (
+          <div className="pg-overlay">
+            <div className="pg-modal">
+              <div className="pg-modal-header">
+                <h3>Confirmar</h3>
+                <button onClick={()=>setModalOpen(false)}><X size={16}/></button>
               </div>
-            ))}
+
+              {carrito.map(i => (
+                <div key={i.id_producto}>
+                  {i.nombre} x{i.cantidad}
+                </div>
+              ))}
+
+              <div className="pg-total">
+                <span>Total</span>
+                <span>${total}</span>
+              </div>
+
+              <button className="pg-btn pg-btn-success" onClick={confirmarVenta}>
+                {loading ? "Guardando..." : "Guardar"}
+              </button>
+            </div>
           </div>
-
-          <div className="divider" />
-
-          <div className="flex justify-between text-xl font-bold">
-            <span>Total:</span>
-            <span className="text-success">${Number(total).toLocaleString()}</span>
-          </div>
-
-          <div className="modal-action">
-            <button
-              className="btn"
-              onClick={() => document.getElementById("modal_confirmar").close()}
-              disabled={loading}
-            >
-              Cancelar
-            </button>
-
-            <button
-              className="btn btn-success"
-              onClick={confirmarVenta}
-              disabled={loading}
-            >
-              {loading ? (
-                <span className="loading loading-spinner loading-sm" />
-              ) : (
-                "💰 Registrar Venta"
-              )}
-            </button>
-          </div>
-        </div>
-      </dialog>
-    </div>
+        )}
+      </div>
+    </>
   );
 }
 

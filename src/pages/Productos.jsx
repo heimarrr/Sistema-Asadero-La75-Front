@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import api from "../api";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import {
+  Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Package
+} from "lucide-react";
 
 function Productos() {
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const [form, setForm] = useState({
     nombre: "",
@@ -21,22 +25,20 @@ function Productos() {
   const [editando, setEditando] = useState(false);
   const [idActual, setIdActual] = useState(null);
 
-  // 🔥 Obtener productos
   const getProductos = async () => {
     try {
       const res = await api.get("/productos");
       setProductos(res.data.data);
-    } catch (error) {
+    } catch {
       toast.error("Error al cargar productos");
     }
   };
 
-  // 🔥 Obtener categorías
   const getCategorias = async () => {
     try {
       const res = await api.get("/categorias");
       setCategorias(res.data.data);
-    } catch (error) {
+    } catch {
       toast.error("Error al cargar categorías");
     }
   };
@@ -46,25 +48,14 @@ function Productos() {
     getCategorias();
   }, []);
 
-  // 🧩 Manejar inputs
   const handleChange = (e) => {
-    let value = e.target.value;
-
-    if (e.target.name === "status") {
-      value = value === "1";
-    }
-
-    if (e.target.name === "id_categoria") {
-      value = parseInt(value);
-    }
-
-    setForm({
-      ...form,
-      [e.target.name]: value,
-    });
+    const { name, value } = e.target;
+    let newValue = value;
+    if (name === "status") newValue = value === "1";
+    if (name === "id_categoria") newValue = value;
+    setForm({ ...form, [name]: newValue });
   };
 
-  // 🧩 Crear
   const openCreate = () => {
     setForm({
       nombre: "",
@@ -77,12 +68,10 @@ function Productos() {
       status: true,
       id_categoria: categorias.length > 0 ? categorias[0].id_categoria : "",
     });
-
     setEditando(false);
-    document.getElementById("modal_producto").showModal();
+    setModalOpen(true);
   };
 
-  // 🧩 Editar
   const openEdit = (p) => {
     setForm({
       nombre: p.nombre,
@@ -95,16 +84,13 @@ function Productos() {
       status: p.status,
       id_categoria: p.id_categoria,
     });
-
     setIdActual(p.id_producto);
     setEditando(true);
-    document.getElementById("modal_producto").showModal();
+    setModalOpen(true);
   };
 
-  // 🧩 Guardar
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       if (editando) {
         await api.put(`/productos/${idActual}`, form);
@@ -113,187 +99,180 @@ function Productos() {
         await api.post("/productos", form);
         toast.success("Producto creado");
       }
-
-      document.getElementById("modal_producto").close();
+      setModalOpen(false);
       getProductos();
-
     } catch (error) {
-      console.log(error.response?.data);
-      toast.error(error.response?.data?.message || "Error");
+      toast.error(error.response?.data?.message || "Error al guardar");
     }
   };
 
-  // 🧩 Eliminar
   const handleDelete = async (id) => {
     if (!confirm("¿Eliminar producto?")) return;
-
     try {
       await api.delete(`/productos/${id}`);
       toast.success("Producto eliminado");
       getProductos();
-    } catch (error) {
+    } catch {
       toast.error("Error al eliminar");
     }
   };
 
-  // 🧩 Toggle estado
   const toggleEstado = async (id) => {
     try {
       await api.post(`/productos/${id}/toggle-estado`);
       toast.success("Estado actualizado");
       getProductos();
-    } catch (error) {
+    } catch {
       toast.error("Error al cambiar estado");
     }
   };
 
   return (
-    <div className="p-6 bg-base-200 min-h-screen">
-      <Toaster />
+    <div className="pg-container">
+      <style>{`
+        .pg-container { font-family: 'Inter', sans-serif; }
+        .pg-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; }
+        .pg-title { font-size:1.5rem; font-weight:600; color:#fff; }
+        .pg-btn-main { display:flex; gap:8px; align-items:center; padding:10px 18px; border-radius:10px; background:#6366f1; color:#fff; border:none; cursor:pointer; font-weight:500; }
+        
+        .pg-card { background:#1e2028; border:1px solid #2a2d36; border-radius:12px; overflow:hidden; }
+        .pg-table { width:100%; border-collapse:collapse; }
+        .pg-table th { text-align:left; padding:12px; background:#2a2f3e; color:#9ca3af; font-size:11px; text-transform:uppercase; }
+        .pg-table td { padding:14px 12px; border-top:1px solid #2a2d36; color:#d1d5db; font-size:13px; }
 
-      <div className="max-w-7xl mx-auto">
+        /* MODAL FIX */
+        .prod-overlay { 
+          position:fixed; inset:0; background:rgba(0,0,0,0.8); 
+          display:flex; align-items:center; justify-content:center; 
+          z-index:9999; backdrop-filter: blur(4px);
+        }
+        .prod-modal { 
+          background:#1e2028; border:1px solid #2a2d36; border-radius:16px; 
+          width:95%; max-width:500px; color:#fff; overflow:hidden;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .prod-modal-head { display:flex; justify-content:space-between; padding:1.2rem; border-bottom:1px solid #2a2d36; background:#252832; }
+        .prod-modal-body { padding:1.5rem; display:grid; grid-template-columns: 1fr 1fr; gap:15px; }
+        .prod-full { grid-column: span 2; }
+        .prod-modal-foot { padding:1rem; display:flex; justify-content:flex-end; gap:12px; background:#1a1c23; }
 
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Productos 🛒</h1>
+        .prod-input { 
+          background:#12141a; border:1px solid #2a2d36; color:#fff; 
+          padding:10px; border-radius:8px; width:100%; box-sizing:border-box;
+        }
+        .prod-input:focus { border-color:#6366f1; outline:none; }
 
-          <button className="btn btn-primary" onClick={openCreate}>
-            + Nuevo Producto
-          </button>
-        </div>
+        .btn-save { background:#6366f1; color:white; padding:10px 20px; border-radius:8px; border:none; cursor:pointer; font-weight:600; }
+        .btn-cancel { background:transparent; color:#9ca3af; padding:10px 20px; border-radius:8px; border:1px solid #2a2d36; cursor:pointer; }
+        
+        .badge { padding:4px 10px; border-radius:20px; font-size:11px; }
+        .active { background:rgba(74, 222, 128, 0.1); color:#4ade80; }
+        .inactive { background:rgba(248, 113, 113, 0.1); color:#f87171; }
+      `}</style>
 
-        {/* TABLA */}
-        <div className="overflow-x-auto bg-base-100 p-4 rounded-xl shadow">
-          <table className="table table-zebra">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Categoría</th>
-                <th>Stock</th>
-                <th>Tipo</th>
-                <th>Precio Venta</th>
-                <th>Estado</th>
-                <th>Acciones</th>
+      <div className="pg-header">
+        <h1 className="pg-title">Productos</h1>
+        <button className="pg-btn-main" onClick={openCreate}>
+          <Plus size={18}/> Nuevo Producto
+        </button>
+      </div>
+
+      <div className="pg-card">
+        <table className="pg-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Stock</th>
+              <th>Precio Venta</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {productos.map((p) => (
+              <tr key={p.id_producto}>
+                <td>{p.nombre}</td>
+                <td>{p.categoria?.nombre || "-"}</td>
+                <td>{p.stock_actual} {p.unidad_medida}</td>
+                <td>${Number(p.precio_venta).toLocaleString()}</td>
+                <td>
+                  <span className={`badge ${p.status ? "active" : "inactive"}`}>
+                    {p.status ? "Activo" : "Inactivo"}
+                  </span>
+                </td>
+                <td>
+                  <div style={{display:'flex', gap: '8px'}}>
+                    <button onClick={() => openEdit(p)} style={{background:'none', border:'none', color:'#6366f1', cursor:'pointer'}}><Pencil size={16}/></button>
+                    <button onClick={() => toggleEstado(p.id_producto)} style={{background:'none', border:'none', color:'#9ca3af', cursor:'pointer'}}><ToggleRight size={16}/></button>
+                    <button onClick={() => handleDelete(p.id_producto)} style={{background:'none', border:'none', color:'#f87171', cursor:'pointer'}}><Trash2 size={16}/></button>
+                  </div>
+                </td>
               </tr>
-            </thead>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-            <tbody>
-              {productos.map((p) => (
-                <tr key={p.id_producto}>
-                  <td>{p.id_producto}</td>
-                  <td>{p.nombre}</td>
-                  <td>{p.categoria?.nombre || "Sin categoría"}</td>
-                  <td>{p.stock_actual}</td>
-                  <td>{p.tipo}</td>
-                  <td>{p.precio_venta || "-"}</td>
+      {modalOpen && (
+        <div className="prod-overlay">
+          <div className="prod-modal">
+            <div className="prod-modal-head">
+              <h3 style={{margin:0}}>{editando ? "Editar Producto" : "Nuevo Producto"}</h3>
+              <button onClick={() => setModalOpen(false)} style={{background:'none', border:'none', color:'#9ca3af', cursor:'pointer'}}><X size={20}/></button>
+            </div>
 
-                  <td>
-                    <span className={`badge ${p.status ? "badge-success" : "badge-error"}`}>
-                      {p.status ? "Activo" : "Inactivo"}
-                    </span>
-                  </td>
+            <form onSubmit={handleSubmit}>
+              <div className="prod-modal-body">
+                <div className="prod-full">
+                  <label style={{fontSize:11, color:'#9ca3af', display:'block', marginBottom:5}}>NOMBRE</label>
+                  <input className="prod-input" name="nombre" value={form.nombre} onChange={handleChange} required />
+                </div>
+                
+                <div className="prod-full">
+                  <label style={{fontSize:11, color:'#9ca3af', display:'block', marginBottom:5}}>DESCRIPCIÓN</label>
+                  <input className="prod-input" name="descripcion" value={form.descripcion} onChange={handleChange} />
+                </div>
 
-                  <td className="flex gap-2">
+                <div>
+                  <label style={{fontSize:11, color:'#9ca3af', display:'block', marginBottom:5}}>STOCK ACTUAL</label>
+                  <input className="prod-input" type="number" name="stock_actual" value={form.stock_actual} onChange={handleChange} required />
+                </div>
 
-                    <button
-                      className="btn btn-sm btn-info"
-                      onClick={() => openEdit(p)}
-                    >
-                      Editar
-                    </button>
+                <div>
+                  <label style={{fontSize:11, color:'#9ca3af', display:'block', marginBottom:5}}>UNIDAD MEDIDA</label>
+                  <input className="prod-input" name="unidad_medida" value={form.unidad_medida} onChange={handleChange} placeholder="Kg, Unid..." required />
+                </div>
 
-                    <button
-                      className="btn btn-sm btn-warning"
-                      onClick={() => toggleEstado(p.id_producto)}
-                    >
-                      Estado
-                    </button>
+                <div>
+                  <label style={{fontSize:11, color:'#9ca3af', display:'block', marginBottom:5}}>PRECIO COMPRA</label>
+                  <input className="prod-input" type="number" name="precio_compra" value={form.precio_compra} onChange={handleChange} />
+                </div>
 
-                    <button
-                      className="btn btn-sm btn-error"
-                      onClick={() => handleDelete(p.id_producto)}
-                    >
-                      Eliminar
-                    </button>
+                <div>
+                  <label style={{fontSize:11, color:'#9ca3af', display:'block', marginBottom:5}}>PRECIO VENTA</label>
+                  <input className="prod-input" type="number" name="precio_venta" value={form.precio_venta} onChange={handleChange} required />
+                </div>
 
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* MODAL */}
-        <dialog id="modal_producto" className="modal">
-          <div className="modal-box">
-
-            <h3 className="font-bold text-lg mb-4">
-              {editando ? "Editar Producto" : "Nuevo Producto"}
-            </h3>
-
-            <form onSubmit={handleSubmit} className="space-y-3">
-
-              <input name="nombre" placeholder="Nombre" className="input input-bordered w-full" onChange={handleChange} value={form.nombre} />
-
-              <input name="descripcion" placeholder="Descripción" className="input input-bordered w-full" onChange={handleChange} value={form.descripcion} />
-
-              <input name="stock_actual" type="number" placeholder="Stock" className="input input-bordered w-full" onChange={handleChange} value={form.stock_actual} />
-
-              <input name="unidad_medida" placeholder="Unidad de medida" className="input input-bordered w-full" onChange={handleChange} value={form.unidad_medida} />
-
-              <input name="precio_compra" type="number" placeholder="Precio compra" className="input input-bordered w-full" onChange={handleChange} value={form.precio_compra} />
-
-              <input name="precio_venta" type="number" placeholder="Precio venta" className="input input-bordered w-full" onChange={handleChange} value={form.precio_venta} />
-
-              <select name="tipo" className="select select-bordered w-full" onChange={handleChange} value={form.tipo}>
-                <option value="insumo">Insumo</option>
-                <option value="venta">Venta</option>
-              </select>
-
-              {/* 🔥 SELECT CATEGORÍAS */}
-              <select
-                name="id_categoria"
-                className="select select-bordered w-full"
-                onChange={handleChange}
-                value={form.id_categoria}
-              >
-                {categorias.map((c) => (
-                  <option key={c.id_categoria} value={c.id_categoria}>
-                    {c.nombre}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                name="status"
-                className="select select-bordered w-full"
-                onChange={handleChange}
-                value={form.status ? "1" : "0"}
-              >
-                <option value="1">Activo</option>
-                <option value="0">Inactivo</option>
-              </select>
-
-              <div className="flex justify-end gap-2 mt-4">
-                <button type="submit" className="btn btn-primary">
-                  Guardar
-                </button>
-
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={() => document.getElementById("modal_producto").close()}
-                >
-                  Cancelar
-                </button>
+                <div className="prod-full">
+                  <label style={{fontSize:11, color:'#9ca3af', display:'block', marginBottom:5}}>CATEGORÍA</label>
+                  <select className="prod-input" name="id_categoria" value={form.id_categoria} onChange={handleChange} required>
+                    <option value="">Seleccione...</option>
+                    {categorias.map(c => (
+                      <option key={c.id_categoria} value={c.id_categoria}>{c.nombre}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
+              <div className="prod-modal-foot">
+                <button type="button" className="btn-cancel" onClick={() => setModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="btn-save">Guardar Producto</button>
+              </div>
             </form>
-
           </div>
-        </dialog>
-
-      </div>
+        </div>
+      )}
     </div>
   );
 }

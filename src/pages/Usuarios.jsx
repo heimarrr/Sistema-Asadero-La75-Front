@@ -1,41 +1,36 @@
 import { useEffect, useState } from "react";
 import api from "../api";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import {
+  Plus, Pencil, Trash2, ToggleLeft,
+  ToggleRight, X, Users
+} from "lucide-react";
 
 function Usuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [roles, setRoles] = useState([]);
-
+  const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState({
-    nombre: "",
-    usuario: "",
-    correo: "",
-    contrasena: "",
-    id_rol: "",
-    estado: true,
+    nombre: "", usuario: "", correo: "",
+    contrasena: "", id_rol: "", estado: true,
   });
-
   const [editando, setEditando] = useState(false);
   const [idActual, setIdActual] = useState(null);
 
-  // 🔥 Obtener usuarios
   const getUsuarios = async () => {
     try {
       const res = await api.get("/usuarios");
       setUsuarios(res.data.data);
-    } catch (error) {
-      console.log(error.response?.data);
+    } catch {
       toast.error("Error al cargar usuarios");
     }
   };
 
-  // 🔥 Obtener roles
   const getRoles = async () => {
     try {
       const res = await api.get("/roles");
       setRoles(res.data.data);
-    } catch (error) {
-      console.log(error.response?.data);
+    } catch {
       toast.error("Error al cargar roles");
     }
   };
@@ -45,42 +40,24 @@ function Usuarios() {
     getRoles();
   }, []);
 
-  // 🧩 Manejar inputs
   const handleChange = (e) => {
     let value = e.target.value;
-
-    if (e.target.name === "estado") {
-      value = value === "1";
-    }
-
-    if (e.target.name === "id_rol") {
-      value = parseInt(value);
-    }
-
-    setForm({
-      ...form,
-      [e.target.name]: value,
-    });
+    if (e.target.name === "estado") value = value === "1";
+    if (e.target.name === "id_rol") value = parseInt(value);
+    setForm({ ...form, [e.target.name]: value });
   };
 
-  // 🧩 Abrir modal crear
   const openCreate = () => {
     setForm({
-      nombre: "",
-      usuario: "",
-      correo: "",
+      nombre: "", usuario: "", correo: "",
       contrasena: "",
-      id_rol: roles.length > 0 ? roles[0].id_rol : "",
-      estado: true,
+      id_rol: roles[0]?.id_rol || "",
+      estado: true
     });
-
     setEditando(false);
-
-    const modal = document.getElementById("modal_user");
-    if (modal) modal.showModal();
+    setModalOpen(true);
   };
 
-  // 🧩 Abrir modal editar
   const openEdit = (user) => {
     setForm({
       nombre: user.nombre,
@@ -88,27 +65,18 @@ function Usuarios() {
       correo: user.correo,
       contrasena: "",
       id_rol: user.id_rol,
-      estado: user.estado,
+      estado: user.estado
     });
-
     setIdActual(user.id_usuario);
     setEditando(true);
-
-    const modal = document.getElementById("modal_user");
-    if (modal) modal.showModal();
+    setModalOpen(true);
   };
 
-  // 🧩 Guardar
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const dataToSend = { ...form };
-
-      // 🔥 No enviar contraseña vacía
-      if (!dataToSend.contrasena) {
-        delete dataToSend.contrasena;
-      }
+      if (!dataToSend.contrasena) delete dataToSend.contrasena;
 
       if (editando) {
         await api.put(`/usuarios/${idActual}`, dataToSend);
@@ -118,182 +86,334 @@ function Usuarios() {
         toast.success("Usuario creado");
       }
 
-      const modal = document.getElementById("modal_user");
-      if (modal) modal.close();
-
+      setModalOpen(false);
       getUsuarios();
-
     } catch (error) {
-      console.log(error.response?.data);
       toast.error(error.response?.data?.message || "Error en operación");
     }
   };
 
-  // 🧩 Eliminar
   const handleDelete = async (id) => {
     if (!confirm("¿Eliminar usuario?")) return;
-
     try {
       await api.delete(`/usuarios/${id}`);
       toast.success("Usuario eliminado");
       getUsuarios();
-    } catch (error) {
-      console.log(error.response?.data);
+    } catch {
       toast.error("Error al eliminar");
     }
   };
 
-  // 🧩 Toggle estado
   const toggleEstado = async (id) => {
     try {
       await api.post(`/usuarios/${id}/toggle-estado`);
       toast.success("Estado actualizado");
       getUsuarios();
-    } catch (error) {
-      console.log(error.response?.data);
+    } catch {
       toast.error("Error al cambiar estado");
     }
   };
 
   return (
-    <div className="p-6 bg-base-200 min-h-screen">
-      <Toaster />
+    <>
+      <style>{`
+        .pg { font-family: 'Inter', sans-serif; color: #e5e7eb; }
 
-      <div className="max-w-6xl mx-auto">
+        .pg-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 2rem;
+        }
 
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Usuarios 👤</h1>
+        .pg-title {
+          font-size: 1.6rem;
+          font-weight: 600;
+          color: #fff;
+        }
 
-          <button className="btn btn-primary" onClick={openCreate}>
-            + Nuevo Usuario
+        .pg-sub {
+          font-size: 13px;
+          color: #6b7280;
+        
+        }
+
+        .pg-btn-new {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 16px;
+          border-radius: 10px;
+          background: #6366f1;
+          color: white;
+          border: none;
+          cursor: pointer;
+        }
+
+        .pg-btn-new:hover { background: #4f46e5; }
+
+        .pg-card {
+          background: #232633;
+          border-radius: 14px;
+          border: 1px solid #2f3441;
+          overflow: hidden;
+        }
+
+        .pg-table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+
+        .pg-table thead {
+          background: #1e2028;
+        }
+
+        .pg-table th {
+          padding: 12px;
+          text-align: left;
+          font-size: 11px;
+          color: #6b7280;
+        }
+
+        .pg-table td {
+          padding: 14px;
+          border-top: 1px solid #2f3441;
+        }
+
+        .pg-table tr:hover td {
+          background: #2a2f3e;
+        }
+
+        .pg-user {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .pg-avatar {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: #6366f1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+        }
+
+        .pg-username { font-size: 12px; color: #6b7280; }
+
+        .pg-role {
+          background: #2f3441;
+          padding: 4px 10px;
+          border-radius: 8px;
+          font-size: 11px;
+        }
+
+        .pg-badge {
+          padding: 4px 10px;
+          border-radius: 20px;
+          font-size: 11px;
+        }
+
+        .active { background: #1f3d2b; color: #4ade80; }
+        .inactive { background: #3a1f24; color: #f87171; }
+
+        .pg-actions { display: flex; gap: 6px; }
+
+        .pg-btn {
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          border: 1px solid #2f3441;
+          background: #181a20;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        }
+
+        .pg-btn:hover { background: #232633; }
+
+        .pg-btn.del:hover { background: #3a1f24; color: #f87171; }
+        .pg-btn.edit:hover { background: #1e3a5f; color: #60a5fa; }
+        .pg-btn.toggle:hover { background: #1f3d2b; color: #4ade80; }
+
+        .pg-empty {
+          text-align: center;
+          padding: 3rem;
+          color: #6b7280;
+        }
+
+        .pg-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.6);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .pg-modal {
+          background: #232633;
+          border-radius: 14px;
+          border: 1px solid #2f3441;
+          width: 100%;
+          max-width: 480px;
+        }
+
+        .pg-modal-header {
+          display: flex;
+          justify-content: space-between;
+          padding: 1rem;
+          border-bottom: 1px solid #2f3441;
+        }
+
+        .pg-modal-body {
+          padding: 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .pg-input, .pg-select {
+          padding: 8px;
+          border-radius: 8px;
+          border: 1px solid #2f3441;
+          background: #181a20;
+          color: white;
+        }
+
+        .pg-modal-footer {
+          padding: 1rem;
+          display: flex;
+          justify-content: flex-end;
+          gap: 8px;
+        }
+
+        .pg-btn-save {
+          background: #6366f1;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 8px;
+        }
+
+        .pg-btn-cancel {
+          border: 1px solid #2f3441;
+          padding: 8px 16px;
+          border-radius: 8px;
+        }
+      `}</style>
+
+      <div className="pg">
+
+        <div className="pg-header">
+          <div>
+            <h1 className="pg-title">Usuarios</h1>
+            <p className="pg-sub">{usuarios.length} usuarios</p>
+          </div>
+
+          <button className="pg-btn-new" onClick={openCreate}>
+            <Plus size={16} /> Nuevo
           </button>
         </div>
 
-        {/* Tabla */}
-        <div className="overflow-x-auto bg-base-100 p-4 rounded-xl shadow">
-          <table className="table table-zebra">
+        <div className="pg-card">
+          <table className="pg-table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Nombre</th>
                 <th>Usuario</th>
                 <th>Correo</th>
                 <th>Rol</th>
                 <th>Estado</th>
-                <th>Acciones</th>
+                <th></th>
               </tr>
             </thead>
-
             <tbody>
-              {usuarios.map((u) => (
-                <tr key={u.id_usuario}>
-                  <td>{u.id_usuario}</td>
-                  <td>{u.nombre}</td>
-                  <td>{u.usuario}</td>
-                  <td>{u.correo}</td>
-
-                  {/* 🔥 Rol dinámico */}
-                  <td>{u.rol?.nombre || "Sin rol"}</td>
-
-                  <td>
-                    <span className={`badge ${u.estado ? "badge-success" : "badge-error"}`}>
-                      {u.estado ? "Activo" : "Inactivo"}
-                    </span>
-                  </td>
-
-                  <td className="flex gap-2">
-
-                    <button
-                      className="btn btn-sm btn-info"
-                      onClick={() => openEdit(u)}
-                    >
-                      Editar
-                    </button>
-
-                    <button
-                      className="btn btn-sm btn-warning"
-                      onClick={() => toggleEstado(u.id_usuario)}
-                    >
-                      Estado
-                    </button>
-
-                    <button
-                      className="btn btn-sm btn-error"
-                      onClick={() => handleDelete(u.id_usuario)}
-                    >
-                      Eliminar
-                    </button>
-
+              {usuarios.length === 0 ? (
+                <tr>
+                  <td colSpan={5}>
+                    <div className="pg-empty">
+                      <Users size={32} />
+                      <p>No hay usuarios</p>
+                    </div>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                usuarios.map(u => (
+                  <tr key={u.id_usuario}>
+                    <td>
+                      <div className="pg-user">
+                        <div className="pg-avatar">
+                          {u.nombre?.charAt(0)}
+                        </div>
+                        <div>
+                          {u.nombre}
+                          <div className="pg-username">@{u.usuario}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{u.correo}</td>
+                    <td><span className="pg-role">{u.rol?.nombre}</span></td>
+                    <td>
+                      <span className={`pg-badge ${u.estado ? "active" : "inactive"}`}>
+                        {u.estado ? "Activo" : "Inactivo"}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="pg-actions">
+                        <button className="pg-btn edit" onClick={() => openEdit(u)}><Pencil size={14} /></button>
+                        <button className="pg-btn toggle" onClick={() => toggleEstado(u.id_usuario)}>
+                          {u.estado ? <ToggleRight size={14}/> : <ToggleLeft size={14}/>}
+                        </button>
+                        <button className="pg-btn del" onClick={() => handleDelete(u.id_usuario)}><Trash2 size={14}/></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* MODAL */}
-        <dialog id="modal_user" className="modal">
-          <div className="modal-box">
-
-            <h3 className="font-bold text-lg mb-4">
-              {editando ? "Editar Usuario" : "Nuevo Usuario"}
-            </h3>
-
-            <form onSubmit={handleSubmit} className="space-y-3">
-
-              <input name="nombre" placeholder="Nombre" className="input input-bordered w-full" onChange={handleChange} value={form.nombre} />
-
-              <input name="usuario" placeholder="Usuario" className="input input-bordered w-full" onChange={handleChange} value={form.usuario} />
-
-              <input name="correo" placeholder="Correo" className="input input-bordered w-full" onChange={handleChange} value={form.correo} />
-
-              <input name="contrasena" placeholder="Contraseña" type="password" className="input input-bordered w-full" onChange={handleChange} />
-
-              {/* 🔥 SELECT DINÁMICO */}
-              <select
-                name="id_rol"
-                className="select select-bordered w-full"
-                onChange={handleChange}
-                value={form.id_rol}
-              >
-                {roles.map((rol) => (
-                  <option key={rol.id_rol} value={rol.id_rol}>
-                    {rol.nombre}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                name="estado"
-                className="select select-bordered w-full"
-                onChange={handleChange}
-                value={form.estado ? "1" : "0"}
-              >
-                <option value="1">Activo</option>
-                <option value="0">Inactivo</option>
-              </select>
-
-              <div className="flex justify-end gap-2 mt-4">
-                <button type="submit" className="btn btn-primary">
-                  Guardar
-                </button>
-
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={() => document.getElementById("modal_user").close()}
-                >
-                  Cancelar
-                </button>
+        {modalOpen && (
+          <div className="pg-overlay">
+            <div className="pg-modal">
+              <div className="pg-modal-header">
+                <h3>{editando ? "Editar" : "Nuevo"} usuario</h3>
+                <button onClick={() => setModalOpen(false)}><X size={16}/></button>
               </div>
 
-            </form>
+              <form onSubmit={handleSubmit}>
+                <div className="pg-modal-body">
+                  <input name="nombre" placeholder="Nombre" onChange={handleChange} value={form.nombre} className="pg-input"/>
+                  <input name="usuario" placeholder="Usuario" onChange={handleChange} value={form.usuario} className="pg-input"/>
+                  <input name="correo" placeholder="Correo" onChange={handleChange} value={form.correo} className="pg-input"/>
+                  <input type="password" name="contrasena" placeholder="Contraseña" onChange={handleChange} className="pg-input"/>
 
+                  <select name="id_rol" onChange={handleChange} value={form.id_rol} className="pg-select">
+                    {roles.map(r => (
+                      <option key={r.id_rol} value={r.id_rol}>{r.nombre}</option>
+                    ))}
+                  </select>
+
+                  <select name="estado" onChange={handleChange} value={form.estado ? "1":"0"} className="pg-select">
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                  </select>
+                </div>
+
+                <div className="pg-modal-footer">
+                  <button type="button" className="pg-btn-cancel" onClick={()=>setModalOpen(false)}>Cancelar</button>
+                  <button type="submit" className="pg-btn-save">Guardar</button>
+                </div>
+              </form>
+            </div>
           </div>
-        </dialog>
+        )}
 
       </div>
-    </div>
+    </>
   );
 }
 
