@@ -159,7 +159,7 @@ function Categorias() {
         .pg-table th {
           padding: 12px;
           text-align: left;
-          font-size: 11px;
+          font-size: 14px;
           color: #6b7280;
         }
 

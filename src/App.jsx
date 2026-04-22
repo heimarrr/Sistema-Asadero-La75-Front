@@ -9,11 +9,13 @@ import Proveedores from './pages/Proveedores'
 import Categorias from './pages/Categorias'
 import Productos from './pages/Productos'
 import Ventas from './pages/Ventas'
-import NuevaVenta from './pages/NuevaVenta'  // 👈 agregar
+import NuevaVenta from './pages/NuevaVenta' 
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <BrowserRouter>
+    <Toaster position="top-right" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<Login />} />
 
@@ -26,7 +28,7 @@ function App() {
             <Route path="/categorias" element={<Categorias />} />
             <Route path="/productos" element={<Productos />} />
             <Route path="/ventas" element={<Ventas />} />
-            <Route path="/ventas/nueva" element={<NuevaVenta />} />  {/* 👈 agregar */}
+            <Route path="/ventas/nueva" element={<NuevaVenta />} />  
           </Route>
         </Route>
 

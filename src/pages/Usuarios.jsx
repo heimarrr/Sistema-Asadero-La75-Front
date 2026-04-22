@@ -133,7 +133,7 @@ function Usuarios() {
         }
 
         .pg-sub {
-          font-size: 13px;
+          font-size: 15px;
           color: #6b7280;
         
         }
@@ -171,7 +171,7 @@ function Usuarios() {
         .pg-table th {
           padding: 12px;
           text-align: left;
-          font-size: 11px;
+          font-size: 14px;
           color: #6b7280;
         }
 
