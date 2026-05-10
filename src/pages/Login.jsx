@@ -1,30 +1,34 @@
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import api from "../api";
-import toast from "react-hot-toast";
-import { Eye, EyeOff, Lock, User, LogIn, Loader2 } from "lucide-react";
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import api from '../api/api'
+import toast from 'react-hot-toast'
+import { Eye, EyeOff, Lock, User, LogIn, Loader2 } from 'lucide-react'
 
 function Login() {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
+  const navigate = useNavigate()
 
-  const [loading, setLoading] = useState(false);
-  const [showPass, setShowPass] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const [showPass, setShowPass] = useState(false)
 
   const onSubmit = async (data) => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const res = await api.post("/login", data);
-      localStorage.setItem("token", res.data.access_token);
-      toast.success("Bienvenido 🔥");
-      navigate("/home");
+      const res = await api.post('/login', data)
+      localStorage.setItem('token', res.data.access_token)
+      toast.success('Bienvenido 🔥')
+      navigate('/home')
     } catch {
-      toast.error("Credenciales incorrectas");
+      toast.error('Credenciales incorrectas')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <>
@@ -166,7 +170,6 @@ function Login() {
 
       <div className="pg-login">
         <div className="pg-card">
-
           <div className="pg-header">
             <div className="pg-logo">🍗</div>
             <div className="pg-title">Asadero La 75</div>
@@ -174,57 +177,60 @@ function Login() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
-
             {/* Usuario */}
             <div className="pg-field">
               <label className="pg-label">Usuario</label>
               <div className="pg-input-wrap">
-                <User size={16} className="pg-icon-left"/>
+                <User size={16} className="pg-icon-left" />
                 <input
                   className="pg-input"
                   placeholder="Tu usuario"
-                  {...register("login", { required: "Requerido" })}
+                  {...register('login', { required: 'Requerido' })}
                 />
               </div>
-              {errors.login && <span className="pg-error">{errors.login.message}</span>}
+              {errors.login && (
+                <span className="pg-error">{errors.login.message}</span>
+              )}
             </div>
 
             {/* Password */}
             <div className="pg-field">
               <label className="pg-label">Contraseña</label>
               <div className="pg-input-wrap">
-                <Lock size={16} className="pg-icon-left"/>
+                <Lock size={16} className="pg-icon-left" />
                 <input
-                  type={showPass ? "text" : "password"}
+                  type={showPass ? 'text' : 'password'}
                   className="pg-input"
                   placeholder="••••••••"
-                  {...register("password", { required: "Requerido" })}
+                  {...register('password', { required: 'Requerido' })}
                 />
                 <span
                   className="pg-icon-right"
                   onClick={() => setShowPass(!showPass)}
                 >
-                  {showPass ? <EyeOff size={16}/> : <Eye size={16}/>}
+                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </span>
               </div>
-              {errors.password && <span className="pg-error">{errors.password.message}</span>}
+              {errors.password && (
+                <span className="pg-error">{errors.password.message}</span>
+              )}
             </div>
 
             <button className="pg-btn" disabled={loading}>
-              {loading ? <Loader2 className="animate-spin" size={16}/> : <LogIn size={16}/>}
-              {loading ? "Entrando..." : "Iniciar sesión"}
+              {loading ? (
+                <Loader2 className="animate-spin" size={16} />
+              ) : (
+                <LogIn size={16} />
+              )}
+              {loading ? 'Entrando...' : 'Iniciar sesión'}
             </button>
-
           </form>
 
-          <div className="pg-footer">
-            Sistema interno • Asadero La 75
-          </div>
-
+          <div className="pg-footer">Sistema interno • Asadero La 75</div>
         </div>
       </div>
     </>
-  );
+  )
 }
 
-export default Login;
+export default Login

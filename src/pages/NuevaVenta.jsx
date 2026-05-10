@@ -1,55 +1,55 @@
-import { useEffect, useState } from "react";
-import api from "../api";
-import toast from "react-hot-toast";
-import { Plus, Trash2, ShoppingCart, X } from "lucide-react";
+import { useEffect, useState } from 'react'
+import api from '../api/api'
+import toast from 'react-hot-toast'
+import { Plus, Trash2, ShoppingCart, X } from 'lucide-react'
 
 function NuevaVenta() {
-  const [productos, setProductos] = useState([]);
-  const [carrito, setCarrito] = useState([]);
-  const [productoSeleccionado, setProductoSeleccionado] = useState("");
-  const [cantidad, setCantidad] = useState(1);
-  const [busqueda, setBusqueda] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [productos, setProductos] = useState([])
+  const [carrito, setCarrito] = useState([])
+  const [productoSeleccionado, setProductoSeleccionado] = useState('')
+  const [cantidad, setCantidad] = useState(1)
+  const [busqueda, setBusqueda] = useState('')
+  const [modalOpen, setModalOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const getProductos = async () => {
       try {
-        const res = await api.get("/productos");
-        setProductos(res.data.data);
+        const res = await api.get('/productos')
+        setProductos(res.data.data)
       } catch {
-        toast.error("Error al cargar productos");
+        toast.error('Error al cargar productos')
       }
-    };
-    getProductos();
-  }, []);
+    }
+    getProductos()
+  }, [])
 
   const productoActual = productos.find(
-    (p) => p.id_producto === parseInt(productoSeleccionado)
-  );
+    (p) => p.id_producto === parseInt(productoSeleccionado),
+  )
 
   const productosFiltrados = productos.filter((p) =>
-    p.nombre.toLowerCase().includes(busqueda.toLowerCase())
-  );
+    p.nombre.toLowerCase().includes(busqueda.toLowerCase()),
+  )
 
   const agregarAlCarrito = () => {
-    if (!productoSeleccionado) return toast.error("Selecciona un producto");
+    if (!productoSeleccionado) return toast.error('Selecciona un producto')
 
-    const cant = parseInt(cantidad);
-    if (cant < 1) return toast.error("Cantidad inválida");
+    const cant = parseInt(cantidad)
+    if (cant < 1) return toast.error('Cantidad inválida')
 
     if (productoActual && cant > productoActual.stock_actual) {
-      return toast.error(`Stock: ${productoActual.stock_actual}`);
+      return toast.error(`Stock: ${productoActual.stock_actual}`)
     }
 
     const existe = carrito.find(
-      (i) => i.id_producto === parseInt(productoSeleccionado)
-    );
+      (i) => i.id_producto === parseInt(productoSeleccionado),
+    )
 
     if (existe) {
-      const nuevaCantidad = existe.cantidad + cant;
+      const nuevaCantidad = existe.cantidad + cant
       if (nuevaCantidad > productoActual.stock_actual) {
-        return toast.error("Stock insuficiente");
+        return toast.error('Stock insuficiente')
       }
 
       setCarrito(
@@ -60,9 +60,9 @@ function NuevaVenta() {
                 cantidad: nuevaCantidad,
                 subtotal: i.precio_unitario * nuevaCantidad,
               }
-            : i
-        )
-      );
+            : i,
+        ),
+      )
     } else {
       setCarrito([
         ...carrito,
@@ -74,57 +74,57 @@ function NuevaVenta() {
           subtotal: productoActual.precio_venta * cant,
           stock_actual: productoActual.stock_actual,
         },
-      ]);
+      ])
     }
 
-    setProductoSeleccionado("");
-    setCantidad(1);
-    setBusqueda("");
-  };
+    setProductoSeleccionado('')
+    setCantidad(1)
+    setBusqueda('')
+  }
 
   const quitar = (id) => {
-    setCarrito(carrito.filter((i) => i.id_producto !== id));
-  };
+    setCarrito(carrito.filter((i) => i.id_producto !== id))
+  }
 
   const cambiarCantidad = (id, val) => {
-    const cant = parseInt(val);
-    if (cant < 1) return;
+    const cant = parseInt(val)
+    if (cant < 1) return
 
-    const item = carrito.find((i) => i.id_producto === id);
+    const item = carrito.find((i) => i.id_producto === id)
     if (cant > item.stock_actual) {
-      return toast.error("Stock insuficiente");
+      return toast.error('Stock insuficiente')
     }
 
     setCarrito(
       carrito.map((i) =>
         i.id_producto === id
           ? { ...i, cantidad: cant, subtotal: i.precio_unitario * cant }
-          : i
-      )
-    );
-  };
+          : i,
+      ),
+    )
+  }
 
-  const total = carrito.reduce((acc, i) => acc + i.subtotal, 0);
+  const total = carrito.reduce((acc, i) => acc + i.subtotal, 0)
 
   const confirmarVenta = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
-      await api.post("/ventas", {
+      await api.post('/ventas', {
         productos: carrito.map((i) => ({
           id_producto: i.id_producto,
           cantidad: i.cantidad,
         })),
-      });
+      })
 
-      toast.success("Venta registrada 🔥");
-      setCarrito([]);
-      setModalOpen(false);
+      toast.success('Venta registrada 🔥')
+      setCarrito([])
+      setModalOpen(false)
     } catch {
-      toast.error("Error al registrar");
+      toast.error('Error al registrar')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <>
@@ -231,7 +231,6 @@ function NuevaVenta() {
         </div>
 
         <div className="pg-grid">
-
           {/* IZQUIERDA */}
           <div className="pg-card">
             <h3>Agregar producto</h3>
@@ -249,7 +248,7 @@ function NuevaVenta() {
               onChange={(e) => setProductoSeleccionado(e.target.value)}
             >
               <option value="">Seleccionar</option>
-              {productosFiltrados.map(p => (
+              {productosFiltrados.map((p) => (
                 <option key={p.id_producto} value={p.id_producto}>
                   {p.nombre} - ${p.precio_venta}
                 </option>
@@ -257,7 +256,7 @@ function NuevaVenta() {
             </select>
 
             {productoActual && (
-              <div style={{fontSize:"13px", color:"#9ca3af"}}>
+              <div style={{ fontSize: '13px', color: '#9ca3af' }}>
                 Stock: {productoActual.stock_actual}
               </div>
             )}
@@ -269,8 +268,11 @@ function NuevaVenta() {
               onChange={(e) => setCantidad(e.target.value)}
             />
 
-            <button className="pg-btn pg-btn-primary" onClick={agregarAlCarrito}>
-              <Plus size={16}/> Agregar
+            <button
+              className="pg-btn pg-btn-primary"
+              onClick={agregarAlCarrito}
+            >
+              <Plus size={16} /> Agregar
             </button>
           </div>
 
@@ -279,7 +281,7 @@ function NuevaVenta() {
             <h3>Carrito ({carrito.length})</h3>
 
             {carrito.length === 0 ? (
-              <p style={{color:"#6b7280"}}>Carrito vacío</p>
+              <p style={{ color: '#6b7280' }}>Carrito vacío</p>
             ) : (
               <>
                 <table className="pg-table">
@@ -292,7 +294,7 @@ function NuevaVenta() {
                     </tr>
                   </thead>
                   <tbody>
-                    {carrito.map(i => (
+                    {carrito.map((i) => (
                       <tr key={i.id_producto}>
                         <td>{i.nombre}</td>
                         <td>
@@ -300,14 +302,16 @@ function NuevaVenta() {
                             type="number"
                             value={i.cantidad}
                             className="pg-input"
-                            style={{width:"60px"}}
-                            onChange={(e)=>cambiarCantidad(i.id_producto,e.target.value)}
+                            style={{ width: '60px' }}
+                            onChange={(e) =>
+                              cambiarCantidad(i.id_producto, e.target.value)
+                            }
                           />
                         </td>
                         <td>${i.subtotal}</td>
                         <td>
-                          <button onClick={()=>quitar(i.id_producto)}>
-                            <Trash2 size={14}/>
+                          <button onClick={() => quitar(i.id_producto)}>
+                            <Trash2 size={14} />
                           </button>
                         </td>
                       </tr>
@@ -322,7 +326,7 @@ function NuevaVenta() {
 
                 <button
                   className="pg-btn pg-btn-success"
-                  onClick={()=>setModalOpen(true)}
+                  onClick={() => setModalOpen(true)}
                 >
                   Confirmar venta
                 </button>
@@ -337,10 +341,12 @@ function NuevaVenta() {
             <div className="pg-modal">
               <div className="pg-modal-header">
                 <h3>Confirmar</h3>
-                <button onClick={()=>setModalOpen(false)}><X size={16}/></button>
+                <button onClick={() => setModalOpen(false)}>
+                  <X size={16} />
+                </button>
               </div>
 
-              {carrito.map(i => (
+              {carrito.map((i) => (
                 <div key={i.id_producto}>
                   {i.nombre} x{i.cantidad}
                 </div>
@@ -351,15 +357,18 @@ function NuevaVenta() {
                 <span>${total}</span>
               </div>
 
-              <button className="pg-btn pg-btn-success" onClick={confirmarVenta}>
-                {loading ? "Guardando..." : "Guardar"}
+              <button
+                className="pg-btn pg-btn-success"
+                onClick={confirmarVenta}
+              >
+                {loading ? 'Guardando...' : 'Guardar'}
               </button>
             </div>
           </div>
         )}
       </div>
     </>
-  );
+  )
 }
 
-export default NuevaVenta;
+export default NuevaVenta

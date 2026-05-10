@@ -1,0 +1,50 @@
+.pg-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pg-modal {
+  background: var(--color-card);
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  width: 100%;
+  max-width: 420px;
+}
+
+.pg-modal-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pg-modal-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pg-modal-footer {
+  padding: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.pg-btn-save {
+  background: var(--color-primary);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.pg-btn-cancel {
+  border: 1px solid var(--color-border);
+  padding: 8px 16px;
+  border-radius: 8px;
+}

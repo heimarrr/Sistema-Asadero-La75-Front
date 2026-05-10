@@ -1,118 +1,129 @@
-import { useEffect, useState } from "react";
-import api from "../api";
-import toast from "react-hot-toast";
+import { useEffect, useState } from 'react'
+import api from '../api/api'
+import toast from 'react-hot-toast'
 import {
-  Plus, Pencil, Trash2, ToggleLeft,
-  ToggleRight, X, Users
-} from "lucide-react";
+  Plus,
+  Pencil,
+  Trash2,
+  ToggleLeft,
+  ToggleRight,
+  X,
+  Users,
+} from 'lucide-react'
 
 function Usuarios() {
-  const [usuarios, setUsuarios] = useState([]);
-  const [roles, setRoles] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [usuarios, setUsuarios] = useState([])
+  const [roles, setRoles] = useState([])
+  const [modalOpen, setModalOpen] = useState(false)
   const [form, setForm] = useState({
-    nombre: "", usuario: "", correo: "",
-    contrasena: "", id_rol: "", estado: true,
-  });
-  const [editando, setEditando] = useState(false);
-  const [idActual, setIdActual] = useState(null);
+    nombre: '',
+    usuario: '',
+    correo: '',
+    contrasena: '',
+    id_rol: '',
+    estado: true,
+  })
+  const [editando, setEditando] = useState(false)
+  const [idActual, setIdActual] = useState(null)
 
   const getUsuarios = async () => {
     try {
-      const res = await api.get("/usuarios");
-      setUsuarios(res.data.data);
+      const res = await api.get('/usuarios')
+      setUsuarios(res.data.data)
     } catch {
-      toast.error("Error al cargar usuarios");
+      toast.error('Error al cargar usuarios')
     }
-  };
+  }
 
   const getRoles = async () => {
     try {
-      const res = await api.get("/roles");
-      setRoles(res.data.data);
+      const res = await api.get('/roles')
+      setRoles(res.data.data)
     } catch {
-      toast.error("Error al cargar roles");
+      toast.error('Error al cargar roles')
     }
-  };
+  }
 
   useEffect(() => {
-    getUsuarios();
-    getRoles();
-  }, []);
+    getUsuarios()
+    getRoles()
+  }, [])
 
   const handleChange = (e) => {
-    let value = e.target.value;
-    if (e.target.name === "estado") value = value === "1";
-    if (e.target.name === "id_rol") value = parseInt(value);
-    setForm({ ...form, [e.target.name]: value });
-  };
+    let value = e.target.value
+    if (e.target.name === 'estado') value = value === '1'
+    if (e.target.name === 'id_rol') value = parseInt(value)
+    setForm({ ...form, [e.target.name]: value })
+  }
 
   const openCreate = () => {
     setForm({
-      nombre: "", usuario: "", correo: "",
-      contrasena: "",
-      id_rol: roles[0]?.id_rol || "",
-      estado: true
-    });
-    setEditando(false);
-    setModalOpen(true);
-  };
+      nombre: '',
+      usuario: '',
+      correo: '',
+      contrasena: '',
+      id_rol: roles[0]?.id_rol || '',
+      estado: true,
+    })
+    setEditando(false)
+    setModalOpen(true)
+  }
 
   const openEdit = (user) => {
     setForm({
       nombre: user.nombre,
       usuario: user.usuario,
       correo: user.correo,
-      contrasena: "",
+      contrasena: '',
       id_rol: user.id_rol,
-      estado: user.estado
-    });
-    setIdActual(user.id_usuario);
-    setEditando(true);
-    setModalOpen(true);
-  };
+      estado: user.estado,
+    })
+    setIdActual(user.id_usuario)
+    setEditando(true)
+    setModalOpen(true)
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const dataToSend = { ...form };
-      if (!dataToSend.contrasena) delete dataToSend.contrasena;
+      const dataToSend = { ...form }
+      if (!dataToSend.contrasena) delete dataToSend.contrasena
 
       if (editando) {
-        await api.put(`/usuarios/${idActual}`, dataToSend);
-        toast.success("Usuario actualizado");
+        await api.put(`/usuarios/${idActual}`, dataToSend)
+        toast.success('Usuario actualizado')
       } else {
-        await api.post("/usuarios", dataToSend);
-        toast.success("Usuario creado");
+        await api.post('/usuarios', dataToSend)
+        toast.success('Usuario creado')
       }
 
-      setModalOpen(false);
-      getUsuarios();
+      setModalOpen(false)
+      getUsuarios()
     } catch (error) {
-      toast.error(error.response?.data?.message || "Error en operación");
+      toast.error(error.response?.data?.message || 'Error en operación')
     }
-  };
+  }
 
   const handleDelete = async (id) => {
-    if (!confirm("¿Eliminar usuario?")) return;
+    if (!confirm('¿Eliminar usuario?')) return
     try {
-      await api.delete(`/usuarios/${id}`);
-      toast.success("Usuario eliminado");
-      getUsuarios();
+      await api.delete(`/usuarios/${id}`)
+      toast.success('Usuario eliminado')
+      getUsuarios()
     } catch {
-      toast.error("Error al eliminar");
+      toast.error('Error al eliminar')
     }
-  };
+  }
 
   const toggleEstado = async (id) => {
     try {
-      await api.post(`/usuarios/${id}/toggle-estado`);
-      toast.success("Estado actualizado");
-      getUsuarios();
+      await api.post(`/usuarios/${id}/toggle-estado`)
+      toast.success('Estado actualizado')
+      getUsuarios()
     } catch {
-      toast.error("Error al cambiar estado");
+      toast.error('Error al cambiar estado')
     }
-  };
+  }
 
   return (
     <>
@@ -306,7 +317,6 @@ function Usuarios() {
       `}</style>
 
       <div className="pg">
-
         <div className="pg-header">
           <div>
             <h1 className="pg-title">Usuarios</h1>
@@ -340,13 +350,11 @@ function Usuarios() {
                   </td>
                 </tr>
               ) : (
-                usuarios.map(u => (
+                usuarios.map((u) => (
                   <tr key={u.id_usuario}>
                     <td>
                       <div className="pg-user">
-                        <div className="pg-avatar">
-                          {u.nombre?.charAt(0)}
-                        </div>
+                        <div className="pg-avatar">{u.nombre?.charAt(0)}</div>
                         <div>
                           {u.nombre}
                           <div className="pg-username">@{u.usuario}</div>
@@ -354,19 +362,40 @@ function Usuarios() {
                       </div>
                     </td>
                     <td>{u.correo}</td>
-                    <td><span className="pg-role">{u.rol?.nombre}</span></td>
                     <td>
-                      <span className={`pg-badge ${u.estado ? "active" : "inactive"}`}>
-                        {u.estado ? "Activo" : "Inactivo"}
+                      <span className="pg-role">{u.rol?.nombre}</span>
+                    </td>
+                    <td>
+                      <span
+                        className={`pg-badge ${u.estado ? 'active' : 'inactive'}`}
+                      >
+                        {u.estado ? 'Activo' : 'Inactivo'}
                       </span>
                     </td>
                     <td>
                       <div className="pg-actions">
-                        <button className="pg-btn edit" onClick={() => openEdit(u)}><Pencil size={14} /></button>
-                        <button className="pg-btn toggle" onClick={() => toggleEstado(u.id_usuario)}>
-                          {u.estado ? <ToggleRight size={14}/> : <ToggleLeft size={14}/>}
+                        <button
+                          className="pg-btn edit"
+                          onClick={() => openEdit(u)}
+                        >
+                          <Pencil size={14} />
                         </button>
-                        <button className="pg-btn del" onClick={() => handleDelete(u.id_usuario)}><Trash2 size={14}/></button>
+                        <button
+                          className="pg-btn toggle"
+                          onClick={() => toggleEstado(u.id_usuario)}
+                        >
+                          {u.estado ? (
+                            <ToggleRight size={14} />
+                          ) : (
+                            <ToggleLeft size={14} />
+                          )}
+                        </button>
+                        <button
+                          className="pg-btn del"
+                          onClick={() => handleDelete(u.id_usuario)}
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -380,41 +409,86 @@ function Usuarios() {
           <div className="pg-overlay">
             <div className="pg-modal">
               <div className="pg-modal-header">
-                <h3>{editando ? "Editar" : "Nuevo"} usuario</h3>
-                <button onClick={() => setModalOpen(false)}><X size={16}/></button>
+                <h3>{editando ? 'Editar' : 'Nuevo'} usuario</h3>
+                <button onClick={() => setModalOpen(false)}>
+                  <X size={16} />
+                </button>
               </div>
 
               <form onSubmit={handleSubmit}>
                 <div className="pg-modal-body">
-                  <input name="nombre" placeholder="Nombre" onChange={handleChange} value={form.nombre} className="pg-input"/>
-                  <input name="usuario" placeholder="Usuario" onChange={handleChange} value={form.usuario} className="pg-input"/>
-                  <input name="correo" placeholder="Correo" onChange={handleChange} value={form.correo} className="pg-input"/>
-                  <input type="password" name="contrasena" placeholder="Contraseña" onChange={handleChange} className="pg-input"/>
+                  <input
+                    name="nombre"
+                    placeholder="Nombre"
+                    onChange={handleChange}
+                    value={form.nombre}
+                    className="pg-input"
+                  />
+                  <input
+                    name="usuario"
+                    placeholder="Usuario"
+                    onChange={handleChange}
+                    value={form.usuario}
+                    className="pg-input"
+                  />
+                  <input
+                    name="correo"
+                    placeholder="Correo"
+                    onChange={handleChange}
+                    value={form.correo}
+                    className="pg-input"
+                  />
+                  <input
+                    type="password"
+                    name="contrasena"
+                    placeholder="Contraseña"
+                    onChange={handleChange}
+                    className="pg-input"
+                  />
 
-                  <select name="id_rol" onChange={handleChange} value={form.id_rol} className="pg-select">
-                    {roles.map(r => (
-                      <option key={r.id_rol} value={r.id_rol}>{r.nombre}</option>
+                  <select
+                    name="id_rol"
+                    onChange={handleChange}
+                    value={form.id_rol}
+                    className="pg-select"
+                  >
+                    {roles.map((r) => (
+                      <option key={r.id_rol} value={r.id_rol}>
+                        {r.nombre}
+                      </option>
                     ))}
                   </select>
 
-                  <select name="estado" onChange={handleChange} value={form.estado ? "1":"0"} className="pg-select">
+                  <select
+                    name="estado"
+                    onChange={handleChange}
+                    value={form.estado ? '1' : '0'}
+                    className="pg-select"
+                  >
                     <option value="1">Activo</option>
                     <option value="0">Inactivo</option>
                   </select>
                 </div>
 
                 <div className="pg-modal-footer">
-                  <button type="button" className="pg-btn-cancel" onClick={()=>setModalOpen(false)}>Cancelar</button>
-                  <button type="submit" className="pg-btn-save">Guardar</button>
+                  <button
+                    type="button"
+                    className="pg-btn-cancel"
+                    onClick={() => setModalOpen(false)}
+                  >
+                    Cancelar
+                  </button>
+                  <button type="submit" className="pg-btn-save">
+                    Guardar
+                  </button>
                 </div>
               </form>
             </div>
           </div>
         )}
-
       </div>
     </>
-  );
+  )
 }
 
-export default Usuarios;
+export default Usuarios

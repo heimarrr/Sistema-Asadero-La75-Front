@@ -1,107 +1,111 @@
-import { useEffect, useState } from "react";
-import api from "../api";
-import toast from "react-hot-toast";
+import { useEffect, useState } from 'react'
+import api from '../api/api'
+import toast from 'react-hot-toast'
 import {
-  Plus, Pencil, Trash2,
-  ToggleLeft, ToggleRight, X, Tag
-} from "lucide-react";
+  Plus,
+  Pencil,
+  Trash2,
+  ToggleLeft,
+  ToggleRight,
+  X,
+  Tag,
+} from 'lucide-react'
 
 function Categorias() {
-  const [categorias, setCategorias] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [categorias, setCategorias] = useState([])
+  const [modalOpen, setModalOpen] = useState(false)
 
   const [form, setForm] = useState({
-    nombre: "",
-    descripcion: "",
+    nombre: '',
+    descripcion: '',
     status: true,
-  });
+  })
 
-  const [editando, setEditando] = useState(false);
-  const [idActual, setIdActual] = useState(null);
+  const [editando, setEditando] = useState(false)
+  const [idActual, setIdActual] = useState(null)
 
   const getCategorias = async () => {
     try {
-      const res = await api.get("/categorias");
-      setCategorias(res.data.data);
+      const res = await api.get('/categorias')
+      setCategorias(res.data.data)
     } catch {
-      toast.error("Error al cargar categorías");
+      toast.error('Error al cargar categorías')
     }
-  };
+  }
 
   useEffect(() => {
-    getCategorias();
-  }, []);
+    getCategorias()
+  }, [])
 
   const handleChange = (e) => {
-    let value = e.target.value;
-    if (e.target.name === "status") value = value === "1";
+    let value = e.target.value
+    if (e.target.name === 'status') value = value === '1'
 
-    setForm({ ...form, [e.target.name]: value });
-  };
+    setForm({ ...form, [e.target.name]: value })
+  }
 
   const openCreate = () => {
     setForm({
-      nombre: "",
-      descripcion: "",
+      nombre: '',
+      descripcion: '',
       status: true,
-    });
-    setEditando(false);
-    setModalOpen(true);
-  };
+    })
+    setEditando(false)
+    setModalOpen(true)
+  }
 
   const openEdit = (c) => {
     setForm({
       nombre: c.nombre,
-      descripcion: c.descripcion || "",
+      descripcion: c.descripcion || '',
       status: c.status,
-    });
+    })
 
-    setIdActual(c.id_categoria);
-    setEditando(true);
-    setModalOpen(true);
-  };
+    setIdActual(c.id_categoria)
+    setEditando(true)
+    setModalOpen(true)
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
       if (editando) {
-        await api.put(`/categorias/${idActual}`, form);
-        toast.success("Categoría actualizada");
+        await api.put(`/categorias/${idActual}`, form)
+        toast.success('Categoría actualizada')
       } else {
-        await api.post("/categorias", form);
-        toast.success("Categoría creada");
+        await api.post('/categorias', form)
+        toast.success('Categoría creada')
       }
 
-      setModalOpen(false);
-      getCategorias();
-
+      setModalOpen(false)
+      getCategorias()
     } catch (error) {
-      toast.error(error.response?.data?.message || "Error");
+      toast.error(error.response?.data?.message || 'Error')
     }
-  };
+  }
 
   const handleDelete = async (id) => {
-    if (!confirm("¿Eliminar categoría?")) return;
+    if (!confirm('¿Eliminar categoría?')) return
 
     try {
-      await api.delete(`/categorias/${id}`);
-      toast.success("Categoría eliminada");
-      getCategorias();
+      await api.delete(`/categorias/${id}`)
+      toast.success('Categoría eliminada')
+      getCategorias()
     } catch {
-      toast.error("No se puede eliminar");
+      toast.error('No se puede eliminar')
     }
-  };
+  }
 
   const toggleEstado = async (id) => {
     try {
-      await api.post(`/categorias/${id}/toggle-estado`);
-      toast.success("Estado actualizado");
-      getCategorias();
+      await api.post(`/categorias/${id}/toggle-estado`)
+      toast.success('Estado actualizado')
+      getCategorias()
     } catch {
-      toast.error("Error al cambiar estado");
+      toast.error('Error al cambiar estado')
     }
-  };
+  }
 
   return (
     <>
@@ -281,7 +285,6 @@ function Categorias() {
       `}</style>
 
       <div className="pg">
-
         <div className="pg-header">
           <div>
             <h1 className="pg-title">Categorías</h1>
@@ -289,7 +292,7 @@ function Categorias() {
           </div>
 
           <button className="pg-btn-new" onClick={openCreate}>
-            <Plus size={16}/> Nueva
+            <Plus size={16} /> Nueva
           </button>
         </div>
 
@@ -305,37 +308,52 @@ function Categorias() {
             </thead>
 
             <tbody>
-              {categorias.map(c => (
+              {categorias.map((c) => (
                 <tr key={c.id_categoria}>
                   <td>
                     <div className="pg-role">
                       <div className="pg-icon">
-                        <Tag size={16}/>
+                        <Tag size={16} />
                       </div>
                       {c.nombre}
                     </div>
                   </td>
 
-                  <td>{c.descripcion || "-"}</td>
+                  <td>{c.descripcion || '-'}</td>
 
                   <td>
-                    <span className={`pg-badge ${c.status ? "active" : "inactive"}`}>
-                      {c.status ? "Activo" : "Inactivo"}
+                    <span
+                      className={`pg-badge ${c.status ? 'active' : 'inactive'}`}
+                    >
+                      {c.status ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>
 
                   <td>
                     <div className="pg-actions">
-                      <button className="pg-btn edit" onClick={()=>openEdit(c)}>
-                        <Pencil size={14}/>
+                      <button
+                        className="pg-btn edit"
+                        onClick={() => openEdit(c)}
+                      >
+                        <Pencil size={14} />
                       </button>
 
-                      <button className="pg-btn toggle" onClick={()=>toggleEstado(c.id_categoria)}>
-                        {c.status ? <ToggleRight size={14}/> : <ToggleLeft size={14}/>}
+                      <button
+                        className="pg-btn toggle"
+                        onClick={() => toggleEstado(c.id_categoria)}
+                      >
+                        {c.status ? (
+                          <ToggleRight size={14} />
+                        ) : (
+                          <ToggleLeft size={14} />
+                        )}
                       </button>
 
-                      <button className="pg-btn del" onClick={()=>handleDelete(c.id_categoria)}>
-                        <Trash2 size={14}/>
+                      <button
+                        className="pg-btn del"
+                        onClick={() => handleDelete(c.id_categoria)}
+                      >
+                        <Trash2 size={14} />
                       </button>
                     </div>
                   </td>
@@ -349,35 +367,59 @@ function Categorias() {
           <div className="pg-overlay">
             <div className="pg-modal">
               <div className="pg-modal-header">
-                <h3>{editando ? "Editar" : "Nueva"} Categoría</h3>
-                <button onClick={()=>setModalOpen(false)}>
-                  <X size={16}/>
+                <h3>{editando ? 'Editar' : 'Nueva'} Categoría</h3>
+                <button onClick={() => setModalOpen(false)}>
+                  <X size={16} />
                 </button>
               </div>
 
               <form onSubmit={handleSubmit}>
                 <div className="pg-modal-body">
-                  <input name="nombre" placeholder="Nombre" value={form.nombre} onChange={handleChange} className="pg-input"/>
-                  <input name="descripcion" placeholder="Descripción" value={form.descripcion} onChange={handleChange} className="pg-input"/>
+                  <input
+                    name="nombre"
+                    placeholder="Nombre"
+                    value={form.nombre}
+                    onChange={handleChange}
+                    className="pg-input"
+                  />
+                  <input
+                    name="descripcion"
+                    placeholder="Descripción"
+                    value={form.descripcion}
+                    onChange={handleChange}
+                    className="pg-input"
+                  />
 
-                  <select name="status" value={form.status ? "1":"0"} onChange={handleChange} className="pg-select">
+                  <select
+                    name="status"
+                    value={form.status ? '1' : '0'}
+                    onChange={handleChange}
+                    className="pg-select"
+                  >
                     <option value="1">Activo</option>
                     <option value="0">Inactivo</option>
                   </select>
                 </div>
 
                 <div className="pg-modal-footer">
-                  <button type="button" className="pg-btn-cancel" onClick={()=>setModalOpen(false)}>Cancelar</button>
-                  <button type="submit" className="pg-btn-save">Guardar</button>
+                  <button
+                    type="button"
+                    className="pg-btn-cancel"
+                    onClick={() => setModalOpen(false)}
+                  >
+                    Cancelar
+                  </button>
+                  <button type="submit" className="pg-btn-save">
+                    Guardar
+                  </button>
                 </div>
               </form>
             </div>
           </div>
         )}
-
       </div>
     </>
-  );
+  )
 }
 
-export default Categorias;
+export default Categorias

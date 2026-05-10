@@ -1,43 +1,56 @@
-import { useEffect, useState } from "react";
-import api from "../api";
-import toast from "react-hot-toast";
-import { Users, ShoppingCart, Package, TrendingUp } from "lucide-react";
+import { useEffect, useState } from 'react'
+import api from '../api/api'
+import toast from 'react-hot-toast'
+import { Users, ShoppingCart, Package, TrendingUp } from 'lucide-react'
 // Importamos componentes de Recharts
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts'
 
 function Home() {
-  const [usuarios, setUsuarios] = useState(0);
-  const [ventas, setVentas] = useState(0);
-  const [productos, setProductos] = useState(0);
+  const [usuarios, setUsuarios] = useState(0)
+  const [ventas, setVentas] = useState(0)
+  const [productos, setProductos] = useState(0)
 
   // Preparamos los datos para la gráfica
   const dataGrafica = [
     { name: 'Usuarios', total: usuarios, color: '#60a5fa' },
     { name: 'Ventas', total: ventas, color: '#22c55e' },
     { name: 'Productos', total: productos, color: '#f59e0b' },
-  ];
+  ]
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const resUsuarios = await api.get("/usuarios");
-        setUsuarios(resUsuarios.data.data.length);
+        const resUsuarios = await api.get('/usuarios')
+        setUsuarios(resUsuarios.data.data.length)
 
         try {
-          const resVentas = await api.get("/ventas");
-          setVentas(resVentas.data.data.length);
-        } catch { setVentas(0); }
+          const resVentas = await api.get('/ventas')
+          setVentas(resVentas.data.data.length)
+        } catch {
+          setVentas(0)
+        }
 
         try {
-          const resProductos = await api.get("/productos");
-          setProductos(resProductos.data.data.length);
-        } catch { setProductos(0); }
+          const resProductos = await api.get('/productos')
+          setProductos(resProductos.data.data.length)
+        } catch {
+          setProductos(0)
+        }
       } catch {
-        toast.error("Error al cargar datos");
+        toast.error('Error al cargar datos')
       }
-    };
-    getData();
-  }, []);
+    }
+    getData()
+  }, [])
 
   return (
     <>
@@ -72,19 +85,25 @@ function Home() {
         {/* CARDS */}
         <div className="pg-grid">
           <div className="pg-card">
-            <div className="pg-icon users"><Users size={20} /></div>
+            <div className="pg-icon users">
+              <Users size={20} />
+            </div>
             <div className="pg-label">Total Usuarios</div>
             <div className="pg-value">{usuarios}</div>
           </div>
 
           <div className="pg-card">
-            <div className="pg-icon ventas"><ShoppingCart size={20} /></div>
+            <div className="pg-icon ventas">
+              <ShoppingCart size={20} />
+            </div>
             <div className="pg-label">Ventas Realizadas</div>
             <div className="pg-value">{ventas}</div>
           </div>
 
           <div className="pg-card">
-            <div className="pg-icon productos"><Package size={20} /></div>
+            <div className="pg-icon productos">
+              <Package size={20} />
+            </div>
             <div className="pg-label">Stock de Productos</div>
             <div className="pg-value">{productos}</div>
           </div>
@@ -96,27 +115,38 @@ function Home() {
             <TrendingUp size={20} className="users" />
             <span className="chart-title">Estadísticas Comparativas</span>
           </div>
-          
+
           <div style={{ width: '100%', height: 300 }}>
             <ResponsiveContainer>
-              <BarChart data={dataGrafica} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#2f3441" vertical={false} />
-                <XAxis 
-                  dataKey="name" 
-                  stroke="#6b7280" 
-                  fontSize={12} 
-                  tickLine={false} 
-                  axisLine={false} 
+              <BarChart
+                data={dataGrafica}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#2f3441"
+                  vertical={false}
                 />
-                <YAxis 
-                  stroke="#6b7280" 
-                  fontSize={12} 
-                  tickLine={false} 
-                  axisLine={false} 
+                <XAxis
+                  dataKey="name"
+                  stroke="#6b7280"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
                 />
-                <Tooltip 
-                  cursor={{fill: '#1e2028'}}
-                  contentStyle={{ background: '#181a20', border: '1px solid #2f3441', borderRadius: '8px' }}
+                <YAxis
+                  stroke="#6b7280"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  cursor={{ fill: '#1e2028' }}
+                  contentStyle={{
+                    background: '#181a20',
+                    border: '1px solid #2f3441',
+                    borderRadius: '8px',
+                  }}
                   itemStyle={{ color: '#fff' }}
                 />
                 <Bar dataKey="total" radius={[6, 6, 0, 0]} barSize={50}>
@@ -128,10 +158,9 @@ function Home() {
             </ResponsiveContainer>
           </div>
         </div>
-
       </div>
     </>
-  );
+  )
 }
 
-export default Home;
+export default Home

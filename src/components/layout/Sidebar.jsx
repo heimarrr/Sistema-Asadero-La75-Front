@@ -19,6 +19,7 @@ const mainNav = [
     { to: '/categorias', icon: Tag, label: 'Categorías' },
     { to: '/productos', icon: Box, label: 'Productos' },
     { to: '/ventas', icon: ReceiptText, label: 'Ventas' },
+    { to: '/compras', icon: ReceiptText, label: 'Compras' }
 ]
 
 const systemNav = [
