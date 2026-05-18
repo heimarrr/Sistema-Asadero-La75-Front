@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Login from './pages/Login'
+import Login from './modules/auth/pages/Login'
 import Usuarios from './pages/Usuarios'
 import PrivateRoute from './components/layout/PrivateRoute'
 import Home from './pages/Home'
