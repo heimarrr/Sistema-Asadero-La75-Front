@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import ProveedorForm from '../components/ProveedorForm'
-import ProveedorModal from '../components/ProveedorModal'
+import Modal from '../../../components/ui/Modal';
 import '@/styles/global.css'
 import '@/styles/components/table.css'
 import '@/styles/components/modal.css'
@@ -235,7 +235,7 @@ function Proveedores() {
 
       {/* MODAL */}
 
-      <ProveedorModal
+      <Modal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         title={editando ? 'Editar Proveedor' : 'Nuevo Proveedor'}
@@ -247,7 +247,7 @@ function Proveedores() {
           onClose={() => setModalOpen(false)}
           editando={editando}
         />
-      </ProveedorModal>
+      </Modal>
     </div>
   )
 }
