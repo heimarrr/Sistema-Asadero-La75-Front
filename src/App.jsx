@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Login from './modules/auth/pages/Login'
-import Usuarios from './pages/Usuarios'
+import Usuarios from './modules/usuarios/pages/Usuarios'
 import PrivateRoute from './components/layout/PrivateRoute'
 import Home from './pages/Home'
 import MainLayout from './components/layout/MainLayout'
