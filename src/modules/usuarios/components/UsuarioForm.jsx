@@ -14,7 +14,7 @@ function UsuarioForm({ form, roles, handleChange, handleSubmit, onClose, editand
           ))}
         </select>
 
-        <select name="status" value={form.status ? '1' : '0'} onChange={handleChange} className="pg-select">
+        <select name="estado" value={form.estado ? '1' : '0'} onChange={handleChange} className="pg-select">
           <option value="1">Activo</option>
           <option value="0">Inactivo</option>
         </select>
