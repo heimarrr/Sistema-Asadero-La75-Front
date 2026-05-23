@@ -1,38 +1,38 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
-    LayoutDashboard,
-    Users,
-    ShieldCheck,
-    Truck,
-    Tag,
-    Box,
-    ReceiptText,
-    Settings,
-    LogOut,
+  LayoutDashboard,
+  Users,
+  ShieldCheck,
+  Truck,
+  Tag,
+  Box,
+  ReceiptText,
+  Settings,
+  LogOut,
 } from 'lucide-react'
 
 const mainNav = [
-    { to: '/home', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/usuarios', icon: Users, label: 'Usuarios' },
-    { to: '/roles', icon: ShieldCheck, label: 'Roles' },
-    { to: '/proveedores', icon: Truck, label: 'Proveedores' },
-    { to: '/categorias', icon: Tag, label: 'Categorías' },
-    { to: '/productos', icon: Box, label: 'Productos' },
-    { to: '/ventas', icon: ReceiptText, label: 'Ventas' },
-    { to: '/compras', icon: ReceiptText, label: 'Compras' }
+  { to: '/home', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/usuarios', icon: Users, label: 'Usuarios' },
+  { to: '/roles', icon: ShieldCheck, label: 'Roles' },
+  { to: '/proveedores', icon: Truck, label: 'Proveedores' },
+  { to: '/categorias', icon: Tag, label: 'Categorías' },
+  { to: '/productos', icon: Box, label: 'Productos' },
+  { to: '/ventas', icon: ReceiptText, label: 'Ventas' },
+  { to: '/compras', icon: ReceiptText, label: 'Compras' },
 ]
 
 const systemNav = [
-    { to: '/configuracion', icon: Settings, label: 'Configuración' },
+  { to: '/configuracion', icon: Settings, label: 'Configuración' },
 ]
 
 export const Sidebar = ({ logout }) => {
-    const location = useLocation()
-    const isActive = (path) => location.pathname === path
+  const location = useLocation()
+  const isActive = (path) => location.pathname === path
 
-    return (
-        <>
-            <style>{`
+  return (
+    <>
+      <style>{`
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
   .sb { width: 280px; height: 100vh; background: #1e2028; border-right: 1px solid #2a2d36; display: flex; flex-direction: column; font-family: 'Inter', sans-serif; flex-shrink: 0; }
@@ -73,66 +73,66 @@ export const Sidebar = ({ logout }) => {
   .out-ico       { color: #3e4557; transition: color .15s; }
 `}</style>
 
-            <aside className="sb hidden lg:flex">
-                <div className="sb-logo">
-                    <div className="sb-logo-icon">🔥</div>
-                    <div>
-                        <p className="sb-brand">Asadero La 75</p>
-                        <p className="sb-sub">Panel Admin</p>
-                    </div>
-                </div>
+      <aside className="sb hidden lg:flex">
+        <div className="sb-logo">
+          <div className="sb-logo-icon">🔥</div>
+          <div>
+            <p className="sb-brand">Asadero La 75</p>
+            <p className="sb-sub">Panel Admin</p>
+          </div>
+        </div>
 
-                <div className="sb-sep" />
+        <div className="sb-sep" />
 
-                <p className="sb-lbl">Menú</p>
-                <nav className="sb-nav">
-                    {mainNav.map(({ to, icon: Icon, label }) => (
-                        <Link
-                            key={to}
-                            to={to}
-                            className={`sb-a ${isActive(to) ? 'on' : ''}`}
-                        >
-                            <Icon size={15} className="ico" />
-                            {label}
-                        </Link>
-                    ))}
-                </nav>
+        <p className="sb-lbl">Menú</p>
+        <nav className="sb-nav">
+          {mainNav.map(({ to, icon: Icon, label }) => (
+            <Link
+              key={to}
+              to={to}
+              className={`sb-a ${isActive(to) ? 'on' : ''}`}
+            >
+              <Icon size={15} className="ico" />
+              {label}
+            </Link>
+          ))}
+        </nav>
 
-                <div className="sb-sep" style={{ marginTop: '0.8rem' }} />
+        <div className="sb-sep" style={{ marginTop: '0.8rem' }} />
 
-                <p className="sb-lbl">Sistema</p>
-                <nav className="sb-nav">
-                    {systemNav.map(({ to, icon: Icon, label }) => (
-                        <Link
-                            key={to}
-                            to={to}
-                            className={`sb-a ${isActive(to) ? 'on' : ''}`}
-                        >
-                            <Icon size={18} className="ico" />
-                            {label}
-                        </Link>
-                    ))}
-                </nav>
+        <p className="sb-lbl">Sistema</p>
+        <nav className="sb-nav">
+          {systemNav.map(({ to, icon: Icon, label }) => (
+            <Link
+              key={to}
+              to={to}
+              className={`sb-a ${isActive(to) ? 'on' : ''}`}
+            >
+              <Icon size={18} className="ico" />
+              {label}
+            </Link>
+          ))}
+        </nav>
 
-                <div className="sb-foot">
-                    <div className="sb-user">
-                        <div className="sb-avatar">
-                            <img
-                                src="https://api.dicebear.com/8.x/notionists/svg?seed=admin"
-                                alt="avatar"
-                            />
-                        </div>
-                        <div>
-                            <p className="sb-uname">Administrador</p>
-                            <p className="sb-uemail">admin@asadero.com</p>
-                        </div>
-                    </div>
-                    <button className="sb-out" onClick={logout}>
-                        <LogOut size={16} className="out-ico" />
-                        Cerrar sesión
-                    </button>
-                </div>
-            </aside>
-        </>
-    )
+        <div className="sb-foot">
+          <div className="sb-user">
+            <div className="sb-avatar">
+              <img
+                src="https://api.dicebear.com/8.x/notionists/svg?seed=admin"
+                alt="avatar"
+              />
+            </div>
+            <div>
+              <p className="sb-uname">Administrador</p>
+              <p className="sb-uemail">admin@asadero.com</p>
+            </div>
+          </div>
+          <button className="sb-out" onClick={logout}>
+            <LogOut size={16} className="out-ico" />
+            Cerrar sesión
+          </button>
+        </div>
+      </aside>
+    </>
+  )
 }

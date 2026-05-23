@@ -7,7 +7,7 @@ import MainLayout from './components/layout/MainLayout'
 import Roles from './modules/roles/pages/Roles'
 import Proveedores from './modules/proveedores/pages/Proveedores'
 import Categorias from './modules/categorias/pages/Categorias'
-import Productos from './pages/Productos'
+import Productos from './modules/productos/pages/Productos'
 import Ventas from './pages/Ventas'
 import NuevaVenta from './pages/NuevaVenta'
 import { Toaster } from 'react-hot-toast'
@@ -17,7 +17,6 @@ import NuevaCompra from './pages/NuevaCompra'
 function App() {
   return (
     <BrowserRouter>
-      <Toaster position="top-right" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<Login />} />
 

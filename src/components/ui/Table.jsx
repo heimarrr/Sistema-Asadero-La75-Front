@@ -19,7 +19,7 @@ function Table({
         <thead>
           <tr>
             {columns.map((col) => (
-              <th key={col.header}>
+              <th key={col.accessor || col.id || col.header}>
                 {col.header}
               </th>
             ))}
@@ -28,22 +28,24 @@ function Table({
 
         <tbody>
           {data.length > 0 ? (
-            data.map((row) => (
-              <tr key={row[rowKey]}>
-                {columns.map((col) => (
-                  <td key={col.header}>
-                    {col.render
-                      ? col.render(row)
-                      : row[col.accessor] || '-'}
-                  </td>
-                ))}
-              </tr>
-            ))
+            data.map((row, rowIndex) => {
+              const currentKey = row[rowKey] !== undefined ? row[rowKey] : rowIndex;
+              
+              return (
+                <tr key={currentKey}>
+                  {columns.map((col) => (
+                    <td key={col.accessor || col.id || col.header}>
+                      {col.render
+                        ? col.render(row)
+                        : row[col.accessor] || '-'}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })
           ) : (
             <tr>
-              <td
-                colSpan={columns.length}
-              >
+              <td colSpan={columns.length} style={{ textAlign: 'center' }}>
                 {emptyMessage}
               </td>
             </tr>

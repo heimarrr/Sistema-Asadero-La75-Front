@@ -1,4 +1,3 @@
-import daisyui from 'daisyui'
 import { plugin } from 'postcss'
 /** @type {import('tailwindcss').Config} */
 

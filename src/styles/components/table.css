@@ -1,24 +1,22 @@
 .pg-card {
-  background: #1e2028;
+  /* Cambio a RGBA para que el backdrop-filter sí funcione */
+  background: rgba(30, 32, 40, 0.75); 
   border: 1px solid #2a2d36;
   border-radius: 16px;
   overflow: hidden;
-
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.25);
-
-  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35); /* Sombra un poco más profunda para modo oscuro */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); /* Soporte para Safari */
 }
 
 /* CONTENEDOR */
-
 .pg-table-container {
   overflow-x: auto;
   scrollbar-width: thin;
+  scrollbar-color: #2a2d36 transparent; /* Estilizado sutil de scrollbar en Firefox */
 }
 
 /* TABLA */
-
 .pg-table {
   width: 100%;
   border-collapse: separate;
@@ -26,111 +24,88 @@
 }
 
 /* HEADER */
-
 .pg-table th {
   text-align: left;
   vertical-align: middle;
-
   padding: 14px 22px;
-
-  background: #222530;
-
-  color: #64748b;
-
+  background: #191c24; /* Un tono más oscuro que la tarjeta para dar jerarquía */
+  color: #94a3b8; /* Un gris más claro (Slate 400) para mejor contraste y legibilidad */
   font-size: 12px;
   font-weight: 700;
-
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-
   border-bottom: 1px solid #2a2d36;
 }
 
 /* CELDAS */
-
 .pg-table td {
-  padding: 14px 22px;
-
+  padding: 16px 22px; /* Un poco más de aire vertical mejora la lectura de datos */
   vertical-align: middle;
-
   border-bottom: 1px solid #2a2d36;
-
   color: #e5e7eb;
   font-size: 14px;
-
-  transition: all 0.2s ease;
 }
 
 /* ÚLTIMA FILA */
-
 .pg-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-/* HOVER */
+/* HOVER EN FILA COMPLETA */
+.pg-table tbody tr {
+  transition: background-color 0.15s ease;
+}
 
-.pg-table tbody tr:hover td {
-  background: rgba(255, 255, 255, 0.03);
+.pg-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02); /* Se aplica a la fila entera de forma suave */
 }
 
 /* BADGES */
-
 .pg-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  padding: 5px 12px;
-
+  padding: 4px 10px; /* Proporciones ligeramente más compactas */
   border-radius: 999px;
-
   font-size: 12px;
   font-weight: 600;
-
-  transition: all 0.2s ease;
 }
 
 .pg-badge.active {
-  background: rgba(34, 197, 94, 0.18);
+  background: rgba(34, 197, 94, 0.12); /* Un toque más sutil */
   color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.2); /* Borde sutil para definirlo mejor en pantallas oscuras */
 }
 
 .pg-badge.inactive {
-  background: rgba(239, 68, 68, 0.18);
+  background: rgba(239, 68, 68, 0.12);
   color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 /* ICONO + TEXTO */
-
 .pg-role {
   display: flex;
   align-items: center;
   gap: 12px;
-
   font-weight: 500;
 }
 
-/* ICONO */
-
+/* ICONO DEL PRODUCTO */
 .pg-icon {
-  width: 30px;
-  height: 30px;
-
-  border-radius: 10px;
-
-  background: #f59e0b;
-
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(10, 41, 221, 0.15); /* Fondo ámbar translúcido en vez de sólido */
   display: flex;
   align-items: center;
   justify-content: center;
-
-  color: white;
-
+  color: #ffffff; /* Icono brillante que resalta más */
   flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.25);
 }
 
 /* ACCIONES */
-
 .pg-actions {
   display: flex;
   align-items: center;
@@ -138,80 +113,73 @@
 }
 
 /* BOTONES ACCIONES */
-
 .pg-btn {
-  width: 30px;
-  height: 30px;
-
-  border: 1px solid #2f3441;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #2a2d36;
   border-radius: 8px;
-
-  background: #191c24;
-  color: #d1d5db;
-
+  background: #1e2028;
+  color: #9ca3af;
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
-
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* HOVERS */
-
+/* HOVERS DE BOTONES */
 .pg-btn:hover {
   transform: translateY(-1px);
-  background: #252a36;
+  background: #2a2d36;
+  border-color: #4b5563;
 }
-
-/* VARIANTES */
 
 .pg-btn.edit:hover {
   color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.4);
 }
 
 .pg-btn.toggle:hover {
   color: #facc15;
+  border-color: rgba(250, 204, 21, 0.4);
 }
 
 .pg-btn.del:hover {
   color: #f87171;
+  border-color: rgba(248, 113, 113, 0.4);
 }
 
 /* BOTÓN NUEVO */
-
 .pg-btn-new {
   display: flex;
   align-items: center;
   gap: 8px;
-
-  padding: 10px 16px;
-
+  padding: 10px 18px;
   border: none;
-  border-radius: 12px;
-
-  background: #6366f1;
+  border-radius: 10px; /* Bajado a 10px para que haga juego con las esquinas de los botones de acción */
+  background: #4f46e5;
   color: white;
-
   font-size: 14px;
   font-weight: 600;
-
   cursor: pointer;
-
   transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
 }
 
 .pg-btn-new:hover {
-  background: #7377ff;
+  background: #5a52e6;
   transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+}
+
+.pg-btn-new:active {
+  transform: translateY(0);
 }
 
 /* RESPONSIVE */
-
 @media (max-width: 768px) {
   .pg-table {
-    min-width: 700px;
+    min-width: 750px; /* Un poco más de margen para evitar que las columnas se aplasten */
   }
 
   .pg-table th,

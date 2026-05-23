@@ -190,7 +190,7 @@ function Categorias() {
         <div className="pg-header">
           <div>
             <h1 className="pg-title">Categorías</h1>
-            <p className="pg-sub">{categorias.length} registradas</p>
+            <p className="pg-sub">{categorias.length} Categorias</p>
           </div>
 
           <button className="pg-btn-new" onClick={openCreate}>
