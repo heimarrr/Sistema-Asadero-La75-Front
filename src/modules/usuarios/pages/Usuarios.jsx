@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-
+import '@/styles/global.css'
+import '@/styles/components/table.css'
+import '@/styles/components/modal.css'
 import Table from '@/components/ui/Table'
 import Modal from '@/components/ui/Modal'
-
 import UsuarioForm from '../components/UsuarioForm'
-
 import {
   getUsuarios,
   createUsuario,
@@ -14,13 +14,7 @@ import {
   toggleUsuarioEstado,
 } from '../services/usuariosService'
 
-import {
-  getRoles,
-} from '@/modules/roles/services/rolesService'
-
-import '@/styles/global.css'
-import '@/styles/components/table.css'
-import '@/styles/components/modal.css'
+import {getRoles,} from '@/modules/roles/services/rolesService'
 
 import {
   Plus,
@@ -35,7 +29,8 @@ function Usuarios() {
 
   const [usuarios, setUsuarios] = useState([])
   const [roles, setRoles] = useState([])
-
+  const [page, setPage] = useState(1)
+  const [lastPage, setLastPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
 
   const [form, setForm] = useState({
@@ -59,9 +54,10 @@ function Usuarios() {
 
     try {
 
-      const data = await getUsuarios()
+      const data = await getUsuarios(page)
 
-      setUsuarios(data)
+      setUsuarios(data.data)
+      setLastPage(data.last_page)
 
     } catch {
 
@@ -69,9 +65,6 @@ function Usuarios() {
     }
   }
 
-  // =========================
-  // CARGAR ROLES
-  // =========================
 
   const loadRoles = async () => {
 
@@ -79,7 +72,7 @@ function Usuarios() {
 
       const data = await getRoles()
 
-      setRoles(data)
+      setRoles(data.data)
 
     } catch {
 
@@ -87,21 +80,13 @@ function Usuarios() {
     }
   }
 
-  // =========================
-  // INIT
-  // =========================
 
   useEffect(() => {
 
     loadUsuarios()
-
     loadRoles()
 
-  }, [])
-
-  // =========================
-  // HANDLE CHANGE
-  // =========================
+  }, [page])
 
   const handleChange = (e) => {
 
@@ -384,6 +369,9 @@ function Usuarios() {
         columns={columns}
         data={usuarios}
         rowKey="id_usuario"
+        page={page}
+        lastPage={lastPage}
+        onPageChange={setPage}
       />
 
       {/* MODAL */}

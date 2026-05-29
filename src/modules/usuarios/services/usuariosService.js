@@ -1,10 +1,10 @@
 import api from '@/api/api'
 
-export const getUsuarios = async () => {
+export const getUsuarios = async (page) => {
 
-  const response = await api.get('/usuarios')
+  const res = await api.get(`/usuarios?page=${page}`)
 
-  return response.data.data
+  return res.data
 }
 
 export const createUsuario = async (data) => {

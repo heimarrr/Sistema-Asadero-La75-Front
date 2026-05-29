@@ -1,80 +1,136 @@
-.pg-card {
-  /* Cambio a RGBA para que el backdrop-filter sí funcione */
-  background: rgba(30, 32, 40, 0.75); 
-  border: 1px solid #2a2d36;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35); /* Sombra un poco más profunda para modo oscuro */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px); /* Soporte para Safari */
+/* ========================
+   RESET BASE
+======================== */
+.pg-card *,
+.pg-card *::before,
+.pg-card *::after {
+  box-sizing: border-box;
 }
 
-/* CONTENEDOR */
+/* ========================
+   CARD
+======================== */
+.pg-card {
+  background: #1b1f2a;
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255,255,255,0.02);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* ========================
+   CONTENEDOR TABLA
+======================== */
 .pg-table-container {
   overflow-x: auto;
   scrollbar-width: thin;
-  scrollbar-color: #2a2d36 transparent; /* Estilizado sutil de scrollbar en Firefox */
+  scrollbar-color: #2a2d36 transparent;
 }
 
-/* TABLA */
+.pg-table-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.pg-table-container::-webkit-scrollbar-thumb {
+  background: #2f3441;
+  border-radius: 999px;
+}
+
+/* ========================
+   TABLA
+======================== */
 .pg-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
+  background: #202636;
+  border-radius: 18px;
+  table-layout: fixed;        /* ✅ columnas estables, sin saltos */
 }
 
-/* HEADER */
+/* ========================
+   HEADER
+======================== */
 .pg-table th {
   text-align: left;
   vertical-align: middle;
-  padding: 14px 22px;
-  background: #191c24; /* Un tono más oscuro que la tarjeta para dar jerarquía */
-  color: #94a3b8; /* Un gris más claro (Slate 400) para mejor contraste y legibilidad */
+  padding: 18px 22px;
+  background: #252c3d;
+  color: #94a3b8;
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-bottom: 1px solid #2a2d36;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  white-space: nowrap;        /* ✅ evita que el header se parta en dos líneas */
 }
 
-/* CELDAS */
+/* ========================
+   ESQUINAS REDONDEADAS
+======================== */
+.pg-table tr:first-child th:first-child { border-top-left-radius: 18px; }
+.pg-table tr:first-child th:last-child  { border-top-right-radius: 18px; }
+.pg-table tr:last-child td:first-child  { border-bottom-left-radius: 18px; }
+.pg-table tr:last-child td:last-child   { border-bottom-right-radius: 18px; }
+
+/* ========================
+   CELDAS
+======================== */
 .pg-table td {
-  padding: 16px 22px; /* Un poco más de aire vertical mejora la lectura de datos */
+  padding: 18px 22px;
   vertical-align: middle;
-  border-bottom: 1px solid #2a2d36;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
   color: #e5e7eb;
   font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;        /* ✅ evita saltos de línea inesperados */
+  overflow: hidden;
+  text-overflow: ellipsis;    /* ✅ texto largo con "..." en lugar de desbordarse */
 }
 
-/* ÚLTIMA FILA */
+/* ========================
+   ÚLTIMA FILA
+======================== */
 .pg-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-/* HOVER EN FILA COMPLETA */
+/* ========================
+   FILAS
+======================== */
 .pg-table tbody tr {
-  transition: background-color 0.15s ease;
+  transition: background-color 0.18s ease;
 }
 
 .pg-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02); /* Se aplica a la fila entera de forma suave */
+  background: rgba(99, 102, 241, 0.05);
 }
 
-/* BADGES */
+/* ========================
+   BADGES
+======================== */
 .pg-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 10px; /* Proporciones ligeramente más compactas */
+  min-width: 78px;
+  height: 28px;
+  padding: 0 12px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
+  line-height: 1;             /* ✅ altura consistente */
+  white-space: nowrap;
 }
 
 .pg-badge.active {
-  background: rgba(34, 197, 94, 0.12); /* Un toque más sutil */
+  background: rgba(34, 197, 94, 0.12);
   color: #4ade80;
-  border: 1px solid rgba(34, 197, 94, 0.2); /* Borde sutil para definirlo mejor en pantallas oscuras */
+  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
 .pg-badge.inactive {
@@ -83,107 +139,264 @@
   border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
-/* ICONO + TEXTO */
+/* ========================
+   ROL (ICONO + TEXTO)
+======================== */
 .pg-role {
   display: flex;
   align-items: center;
   gap: 12px;
   font-weight: 500;
+  min-width: 0;               /* ✅ permite que el texto haga ellipsis en flex */
 }
 
-/* ICONO DEL PRODUCTO */
+.pg-role span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ========================
+   ICONO
+======================== */
 .pg-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(10, 41, 221, 0.15); /* Fondo ámbar translúcido en vez de sólido */
+  width: 34px;
+  height: 34px;
+  min-width: 34px;            /* ✅ no se comprime en flex */
+  border-radius: 10px;
+  background: rgba(99, 102, 241, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff; /* Icono brillante que resalta más */
+  color: #a5b4fc;
   flex-shrink: 0;
-  border: 1px solid rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(99, 102, 241, 0.12);
 }
 
-/* ACCIONES */
+.pg-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;             /* ✅ elimina espacio fantasma */
+  flex-shrink: 0;
+}
+
+/* ========================
+   ACCIONES
+======================== */
 .pg-actions {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-/* BOTONES ACCIONES */
+/* ========================
+   BOTONES DE ACCIÓN
+======================== */
 .pg-btn {
-  width: 32px;
-  height: 32px;
-  border: 1px solid #2a2d36;
-  border-radius: 8px;
-  background: #1e2028;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;            /* ✅ tamaño fijo */
+  padding: 0;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
   color: #9ca3af;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+  line-height: 1;
 }
 
-/* HOVERS DE BOTONES */
+.pg-btn svg {
+  width: 15px;
+  height: 15px;
+  display: block;             /* ✅ elimina espacio fantasma */
+  flex-shrink: 0;
+}
+
+/* ========================
+   ACCESIBILIDAD TECLADO
+======================== */
+.pg-btn:focus-visible,
+.pg-btn-new:focus-visible,
+.pagination-btn:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+/* ========================
+   HOVER BOTONES ACCIÓN
+======================== */
 .pg-btn:hover {
   transform: translateY(-1px);
-  background: #2a2d36;
-  border-color: #4b5563;
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1);
 }
 
 .pg-btn.edit:hover {
   color: #60a5fa;
-  border-color: rgba(96, 165, 250, 0.4);
+  border-color: rgba(96, 165, 250, 0.35);
+  background: rgba(96, 165, 250, 0.06);
 }
 
 .pg-btn.toggle:hover {
   color: #facc15;
-  border-color: rgba(250, 204, 21, 0.4);
+  border-color: rgba(250, 204, 21, 0.35);
+  background: rgba(250, 204, 21, 0.06);
 }
 
 .pg-btn.del:hover {
   color: #f87171;
-  border-color: rgba(248, 113, 113, 0.4);
+  border-color: rgba(248, 113, 113, 0.35);
+  background: rgba(248, 113, 113, 0.06);
 }
 
-/* BOTÓN NUEVO */
+.pg-btn:active {
+  transform: translateY(0);   /* ✅ feedback táctil */
+}
+
+/* ========================
+   BOTÓN NUEVO
+======================== */
 .pg-btn-new {
-  display: flex;
+  display: inline-flex;       /* ✅ inline-flex es más predecible que flex */
   align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
+  justify-content: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 22px;
   border: none;
-  border-radius: 10px; /* Bajado a 10px para que haga juego con las esquinas de los botones de acción */
+  border-radius: 14px;
   background: #4f46e5;
   color: white;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  transition: all 0.18s ease;
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+  white-space: nowrap;        /* ✅ el texto no se parte */
+  line-height: 1;
+}
+
+.pg-btn-new svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex-shrink: 0;
 }
 
 .pg-btn-new:hover {
-  background: #5a52e6;
+  background: #5b52f0;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+  box-shadow: 0 12px 24px rgba(79, 70, 229, 0.32);
 }
 
 .pg-btn-new:active {
   transform: translateY(0);
 }
 
-/* RESPONSIVE */
+/* PAGINACIÓN */
+.table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+  padding: 0 16px 20px;
+}
+
+.pagination-btn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  padding: 0;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  color: #d1d5db;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.pagination-btn.active {
+  background: #4f46e5;
+  border-color: rgba(79, 70, 229, 0.5);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+  cursor: default;
+  pointer-events: none;
+}
+
+.pagination-btn:hover:not(:disabled):not(.active) {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.1);
+  color: #f3f4f6;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.pagination-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Puntos suspensivos */
+.pagination-dots {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 14px;
+  flex-shrink: 0;
+  letter-spacing: 1px;
+}
+
+/* ========================
+   RESPONSIVE
+======================== */
 @media (max-width: 768px) {
   .pg-table {
-    min-width: 750px; /* Un poco más de margen para evitar que las columnas se aplasten */
+    min-width: 680px;
   }
 
   .pg-table th,
   .pg-table td {
-    padding: 12px 16px;
+    padding: 14px 16px;
+  }
+
+  .pg-btn-new {
+    width: 100%;
+  }
+
+  .table-pagination {
+    gap: 4px;
+  }
+
+  .pagination-btn {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    font-size: 13px;
   }
 }

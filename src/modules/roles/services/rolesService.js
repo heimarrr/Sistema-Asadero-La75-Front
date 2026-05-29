@@ -3,7 +3,7 @@ import api from '@/api/api'
 // Obtener roles
 export const getRoles = async () => {
   const res = await api.get('/roles')
-  return res.data.data
+  return res.data
 }
 
 // Crear rol

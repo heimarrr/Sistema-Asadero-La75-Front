@@ -11,8 +11,8 @@ import Productos from './modules/productos/pages/Productos'
 import Ventas from './pages/Ventas'
 import NuevaVenta from './pages/NuevaVenta'
 import { Toaster } from 'react-hot-toast'
-import Compras from './pages/Compras'
-import NuevaCompra from './pages/NuevaCompra'
+import Compras from './modules/compras/pages/Compras'
+import NuevaCompra from './modules/compras/pages/NuevaCompra'
 
 function App() {
   return (

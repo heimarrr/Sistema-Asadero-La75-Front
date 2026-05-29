@@ -52,60 +52,6 @@ function Ventas() {
 
   return (
     <>
-      <style>{`
-        .pg { font-family: 'Inter', sans-serif; color: #e5e7eb; }
-        .pg-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .pg-title { font-size: 1.6rem; font-weight: 600; color: #fff; }
-        .pg-sub { font-size: 13px; color: #6b7280; }
-
-        .pg-btn-new {
-          display: flex; align-items: center; gap: 8px; padding: 10px 16px;
-          border-radius: 10px; background: #6366f1; color: white; border: none; cursor: pointer;
-          text-decoration: none; font-size: 13px;
-        }
-
-        .pg-card { background: #232633; border-radius: 14px; border: 1px solid #2f3441; overflow: hidden; }
-        .pg-table { width: 100%; border-collapse: collapse; }
-        .pg-table thead { background: #1e2028; }
-        .pg-table th { padding: 12px; text-align: left; font-size: 11px; color: #6b7280; text-transform: uppercase; }
-        .pg-table td { padding: 14px; border-top: 1px solid #2f3441; font-size: 13px; }
-        .pg-table tr:hover td { background: #2a2f3e; }
-
-        .pg-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; }
-        .active { background: #1f3d2b; color: #4ade80; }
-        .inactive { background: #3a1f24; color: #f87171; }
-
-        .pg-actions { display: flex; gap: 6px; }
-        .pg-btn {
-          width: 32px; height: 32px; border-radius: 8px; border: 1px solid #2f3441;
-          background: #181a20; display: flex; align-items: center; justify-content: center;
-          cursor: pointer; color: #e5e7eb;
-        }
-        .pg-btn:hover { background: #232633; }
-        .pg-btn.del:hover { background: #3a1f24; color: #f87171; }
-
-        /* MODALES (Copiados de Categorías) */
-        .pg-overlay {
-          position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-          display: flex; align-items: center; justify-content: center; z-index: 1000;
-        }
-        .pg-modal {
-          background: #232633; border-radius: 14px; border: 1px solid #2f3441;
-          width: 100%; max-width: 480px; color: #fff;
-        }
-        .pg-modal-header {
-          display: flex; justify-content: space-between; align-items: center;
-          padding: 1rem; border-bottom: 1px solid #2f3441;
-        }
-        .pg-modal-body { padding: 1.2rem; font-size: 14px; }
-        .pg-modal-footer { padding: 1rem; display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid #2f3441; }
-        
-        .pg-btn-save { background: #6366f1; color: white; padding: 8px 16px; border-radius: 8px; border:none; cursor:pointer; }
-        .pg-btn-cancel { border: 1px solid #2f3441; background: #181a20; color:white; padding: 8px 16px; border-radius: 8px; cursor:pointer; }
-        .pg-btn-danger { background: #ef4444; color: white; padding: 8px 16px; border-radius: 8px; border:none; cursor:pointer; }
-        
-        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2f3441; }
-      `}</style>
 
       <div className="pg">
         <div className="pg-header">

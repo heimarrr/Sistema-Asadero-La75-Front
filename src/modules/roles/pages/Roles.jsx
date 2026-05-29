@@ -27,6 +27,8 @@ import {
 function Roles() {
   const [roles, setRoles] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
+  const [page, setPage] = useState(1)
+  const [lastPage, setLastPage] = useState(1)
 
   const [form, setForm] = useState({
     nombre: '',
@@ -42,7 +44,9 @@ function Roles() {
     try {
       const data = await getRoles()
 
-      setRoles(Array.isArray(data) ? data : [])
+      setRoles(data.data)
+      setLastPage(data.last_page)
+
     } catch {
       toast.error('Error al cargar roles')
       setRoles([])
@@ -51,7 +55,7 @@ function Roles() {
 
   useEffect(() => {
     loadRoles()
-  }, [])
+  }, [page])
 
   // cambios formulario
   const handleChange = (e) => {
@@ -212,6 +216,8 @@ function Roles() {
       {/* TABLA */}
 
       <Table columns={columns} data={roles} />
+
+      {/* MODAL */}
 
       <Modal
         open={modalOpen}

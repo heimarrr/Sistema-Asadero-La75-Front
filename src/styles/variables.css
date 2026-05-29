@@ -1,16 +1,41 @@
 :root {
-  --color-bg: #181a20;
-  --color-card: #232633;
-  --color-border: #2f3441;
-  --color-primary: #6366f1;
-  --color-primary-hover: #4f46e5;
+  /* FONDOS */
+  --color-bg: #111318;
+  --color-bg-soft: #15171d;
+  --color-surface: #1f2330;
+  --color-surface-dark: #161a22;
+  --color-surface-hover: #252938;
+  --color-input-bg: #181c27;
+  --color-input-bg-focus: #1c1f28;
 
-  --color-text: #e5e7eb;
+  /* TEXTOS */
+  --color-text: #f3f4f6;
+  --color-text-secondary: #9ca3af;
+  --color-text-heading: #ffffff;
   --color-muted: #6b7280;
+  --color-muted-strong: #4b5563;
+  --color-placeholder: #6b7280;
 
+  /* BORDES */
+  --color-border: #2a2d36;
+  --color-border-hover: #3b4252;
+
+  /* PRIMARIO */
+  --color-primary: #6366f1;
+  --color-primary-hover: #5b52f0;
+  --color-primary-border-focus: rgba(129, 140, 248, 0.5);
+  --color-primary-focus-ring: rgba(99, 102, 241, 0.08);
+  --color-primary-shadow: rgba(99, 102, 241, 0.18);
+  --color-primary-shadow-hover: rgba(99, 102, 241, 0.24);
+
+  /* ESTADOS */
   --color-success-bg: #1f3d2b;
   --color-success-text: #4ade80;
-
   --color-danger-bg: #3a1f24;
   --color-danger-text: #f87171;
+
+  /* TABLA / COMPONENTES */
+  --color-table-card: #1b1f2a;
+  --color-table-bg: #202636;
+  --color-table-header: #252c3d;
 }
