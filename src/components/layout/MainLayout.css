@@ -36,7 +36,7 @@
 
 .ml-card {
   width: 100%;
-  background: var(--color-surface);
+  background: var(--color-table-card);
   border-radius: 22px;
   border: 1px solid var(--color-border);
   padding: 2.5rem;

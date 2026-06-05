@@ -14,19 +14,14 @@ function Compras() {
   const [compras, setCompras] = useState([])
   const [compraDetalle, setCompraDetalle] = useState(null)
   const [compraEliminar, setCompraEliminar] = useState(null)
-
   const [modalDetalle, setModalDetalle] = useState(false)
   const [modalEliminar, setModalEliminar] = useState(false)
 
   const loadCompras = async () => {
     try {
       const data = await getCompras()
-
-      console.log(data)
-
       setCompras(data || [])
     } catch (error) {
-      console.error(error)
 
       toast.error('Error al cargar compras')
     }
