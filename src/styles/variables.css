@@ -1,41 +1,42 @@
 :root {
-  /* FONDOS */
-  --color-bg: #111318;
-  --color-bg-soft: #15171d;
-  --color-surface: #1f2330;
-  --color-surface-dark: #161a22;
-  --color-surface-hover: #252938;
-  --color-input-bg: #181c27;
-  --color-input-bg-focus: #1c1f28;
+  /* FONDOS (dark moderno con toque azul profundo) */
+  --color-bg: #0b1220;
+  --color-bg-soft: #0f172a;
+  --color-surface: #111c33;
+  --color-surface-dark: #0a1020;
+  --color-surface-hover: #16213a;
+  --color-input-bg: #0f172a;
+  --color-input-bg-focus: #111c33;
 
-  /* TEXTOS */
-  --color-text: #f3f4f6;
-  --color-text-secondary: #9ca3af;
+  /* TEXTOS (más claros y legibles) */
+  --color-text: #e5e7eb;
+  --color-text-secondary: #aab3c5;
   --color-text-heading: #ffffff;
-  --color-muted: #6b7280;
-  --color-muted-strong: #4b5563;
-  --color-placeholder: #6b7280;
+  --color-muted: #7c879a;
+  --color-muted-strong: #5b6475;
+  --color-placeholder: #7c879a;
 
-  /* BORDES */
-  --color-border: #2a2d36;
-  --color-border-hover: #3b4252;
+  /* BORDES (más suaves, menos agresivos) */
+  --color-border: #1f2a44;
+  --color-border-hover: #2b3a5f;
 
-  /* PRIMARIO */
-  --color-primary: #6366f1;
-  --color-primary-hover: #5b52f0;
-  --color-primary-border-focus: rgba(129, 140, 248, 0.5);
-  --color-primary-focus-ring: rgba(99, 102, 241, 0.08);
-  --color-primary-shadow: rgba(99, 102, 241, 0.18);
-  --color-primary-shadow-hover: rgba(99, 102, 241, 0.24);
+  /* PRIMARIO (indigo/teal más moderno y vibrante) */
+  --color-primary: #4f8cff;
+  --color-primary-hover: #3b7cff;
+  --color-primary-border-focus: rgba(79, 140, 255, 0.45);
+  --color-primary-focus-ring: rgba(79, 140, 255, 0.12);
+  --color-primary-shadow: rgba(79, 140, 255, 0.22);
+  --color-primary-shadow-hover: rgba(79, 140, 255, 0.30);
 
-  /* ESTADOS */
-  --color-success-bg: #1f3d2b;
-  --color-success-text: #4ade80;
-  --color-danger-bg: #3a1f24;
-  --color-danger-text: #f87171;
+  /* ESTADOS (más “soft”, menos rojo agresivo) */
+  --color-success-bg: #0f2f25;
+  --color-success-text: #34d399;
+
+  --color-danger-bg: #2a1215;
+  --color-danger-text: #fb7185;
 
   /* TABLA / COMPONENTES */
-  --color-table-card: #1b1f2a;
-  --color-table-bg: #202636;
-  --color-table-header: #252c3d;
+  --color-table-card: #0f172a;
+  --color-table-bg: #061229;
+  --color-table-header: #151e31;
 }

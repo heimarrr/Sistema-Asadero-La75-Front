@@ -11,7 +11,7 @@
    CARD
 ======================== */
 .pg-card {
-  background: #1b1f2a;
+  background: #05102c;
   border: 1px solid rgba(255,255,255,0.04);
   border-radius: 18px;
   overflow: hidden;
@@ -47,7 +47,7 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  background: #202636;
+  background: #101a3a;
   border-radius: 18px;
   table-layout: fixed;        /* ✅ columnas estables, sin saltos */
 }

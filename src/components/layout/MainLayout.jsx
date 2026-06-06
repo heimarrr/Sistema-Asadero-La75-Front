@@ -14,21 +14,6 @@ function MainLayout() {
 
   return (
     <>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            borderRadius: "10px",
-            background: "#232633",
-            color: "#e5e7eb",
-            fontSize: "13.5px",
-            border: "1px solid #2f3441",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
-          },
-          success: { iconTheme: { primary: "#4ade80", secondary: "#232633" } },
-          error:   { iconTheme: { primary: "#f87171", secondary: "#232633" } },
-        }}
-      />
 
       <div className="ml-root">
         <Sidebar logout={logout} />
