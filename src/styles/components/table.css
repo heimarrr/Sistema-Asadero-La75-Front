@@ -49,7 +49,16 @@
   border-spacing: 0;
   background: #101a3a;
   border-radius: 18px;
-  table-layout: fixed;        /* ✅ columnas estables, sin saltos */
+
+  /* 🔧 CAMBIO CLAVE:
+     "fixed" repartía el ancho en partes iguales entre columnas,
+     sin importar su contenido. "auto" deja que cada columna
+     mida según lo que necesita, respetando los min-width de abajo. */
+  table-layout: auto;
+
+  /* 🔧 Aseguramos un ancho mínimo total para que en pantallas
+     chicas no se aplaste todo: aparece scroll horizontal en su lugar. */
+  min-width: 980px;
 }
 
 /* ========================
@@ -87,9 +96,40 @@
   color: #e5e7eb;
   font-size: 14px;
   font-weight: 500;
-  white-space: nowrap;        /* ✅ evita saltos de línea inesperados */
+
+  /* 🔧 CAMBIO CLAVE:
+     Quitamos el ellipsis por defecto en TODAS las celdas.
+     Antes esto cortaba "Coca Cola 1.5L" -> "Coca Cola 1."
+     Ahora cada celda muestra su contenido completo,
+     y el que necesite truncar usa .pg-table-truncate (ver abajo). */
+  white-space: nowrap;
+}
+
+/* Columnas específicas: anchos mínimos según su contenido típico.
+   Ajusta el orden de nth-child si tu orden de columnas es distinto. */
+.pg-table th:nth-child(1),
+.pg-table td:nth-child(1) {
+  min-width: 170px;   /* PRODUCTO */
+}
+
+.pg-table th:nth-child(2),
+.pg-table td:nth-child(2) {
+  min-width: 220px;   /* DESCRIPCIÓN */
+  white-space: normal; /* permite wrap si es muy larga, en vez de cortar */
+}
+
+.pg-table th:nth-child(9),
+.pg-table td:nth-child(9) {
+  min-width: 140px;   /* ACCIONES */
+}
+
+/* Si en algún caso SÍ quieres truncar con "..." (por ejemplo,
+   una columna de notas larguísima), aplica esta clase manualmente
+   desde el JSX en vez de hacerlo global: */
+.pg-table-truncate {
   overflow: hidden;
-  text-overflow: ellipsis;    /* ✅ texto largo con "..." en lugar de desbordarse */
+  text-overflow: ellipsis;
+  max-width: 240px;
 }
 
 /* ========================
@@ -377,7 +417,7 @@
 ======================== */
 @media (max-width: 768px) {
   .pg-table {
-    min-width: 680px;
+    min-width: 780px;
   }
 
   .pg-table th,
