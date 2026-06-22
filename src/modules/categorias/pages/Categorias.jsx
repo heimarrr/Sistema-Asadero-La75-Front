@@ -7,6 +7,7 @@ import '@/styles/components/modal.css'
 import Table from '@/components/ui/Table'
 import Modal from '../../../components/ui/Modal';
 import CategoriaForm from '../components/CategoriaForm'
+import usePagination from '@/hooks/usePagination'
 import {
   Plus,
   Pencil,
@@ -37,6 +38,13 @@ function Categorias() {
 
   const [editando, setEditando] = useState(false)
   const [idActual, setIdActual] = useState(null)
+
+  const {
+    paginatedData: categoriasPaginadas,
+    page,
+    lastPage,
+    onPageChange,
+  } = usePagination(categorias, 10)
 
   const LoadCategorias = async () => {
     try {
@@ -200,7 +208,13 @@ function Categorias() {
 
         {/* TABLA */}
         
-        <Table columns={columns} data={categorias} />
+        <Table 
+        columns={columns} 
+        data={categoriasPaginadas}
+        rowKey="id_categoria"
+        page={page}                 // 👈 4. props de paginación
+        lastPage={lastPage}
+        onPageChange={onPageChange} />
 
         {/* MODAL */}
 

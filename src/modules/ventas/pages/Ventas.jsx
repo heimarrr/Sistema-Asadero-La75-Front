@@ -10,6 +10,7 @@ import Table from '@/components/ui/Table'
 import VentaDetalleModal from '../components/VentaDetalleModal'
 import VentaDeleteModal from '../components/VentaDeleteModal'
 import { getVentas, getVenta, deleteVenta } from '../services/ventasService'
+import usePagination from '@/hooks/usePagination'
 
 function Ventas() {
   const [ventas, setVentas] = useState([])
@@ -17,6 +18,13 @@ function Ventas() {
   const [ventaEliminar, setVentaEliminar] = useState(null)
   const [modalDetalle, setModalDetalle] = useState(false)
   const [modalEliminar, setModalEliminar] = useState(false)
+
+  const {
+    paginatedData: ventasPaginadas,
+    page,
+    lastPage,
+    onPageChange,
+  } = usePagination(ventas, 10)
 
   const loadVentas = async () => {
     try {
@@ -126,7 +134,14 @@ function Ventas() {
           </Link>
         </div>
 
-        <Table columns={columns} data={ventas} rowKey="id_venta" />
+        <Table 
+          columns={columns} 
+          data={ventasPaginadas} 
+          rowKey="id_venta"
+          page={page}
+          lastPage={lastPage}
+          onPageChange={onPageChange}
+        />
 
         <VentaDetalleModal
           open={modalDetalle}

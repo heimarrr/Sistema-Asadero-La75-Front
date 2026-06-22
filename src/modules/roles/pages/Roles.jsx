@@ -5,6 +5,7 @@ import '@/styles/components/table.css'
 import '@/styles/components/modal.css'
 import Table from '@/components/ui/Table'
 import Modal from '../../../components/ui/Modal'
+import usePagination from '@/hooks/usePagination' // 👈 1. IMPORTAR EL HOOK
 import RolForm from '../components/RolForm'
 import {
   Plus,
@@ -27,8 +28,6 @@ import {
 function Roles() {
   const [roles, setRoles] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
-  const [page, setPage] = useState(1)
-  const [lastPage, setLastPage] = useState(1)
 
   const [form, setForm] = useState({
     nombre: '',
@@ -39,23 +38,30 @@ function Roles() {
   const [editando, setEditando] = useState(false)
   const [idActual, setIdActual] = useState(null)
 
+  const {
+    paginatedData: rolesPaginados,
+    page,
+    lastPage,
+    onPageChange,
+  } = usePagination(roles, 10) // 10 productos por página, ajusta si quieres
+
   // cargar roles
   const loadRoles = async () => {
     try {
       const data = await getRoles()
 
-      setRoles(data.data)
-      setLastPage(data.last_page)
+      setRoles(data)
+      
 
     } catch {
       toast.error('Error al cargar roles')
-      setRoles([])
+
     }
   }
 
   useEffect(() => {
     loadRoles()
-  }, [page])
+  }, [])
 
   // cambios formulario
   const handleChange = (e) => {
@@ -215,7 +221,13 @@ function Roles() {
 
       {/* TABLA */}
 
-      <Table columns={columns} data={roles} />
+      <Table columns={columns}
+        data={rolesPaginados}   // 👈 3. usar la página actual, no "productos" completo
+        rowKey="id_rol"
+        page={page}                 // 👈 4. props de paginación
+        lastPage={lastPage}
+        onPageChange={onPageChange}
+      />
 
       {/* MODAL */}
 

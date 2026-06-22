@@ -9,13 +9,20 @@ import Table from '@/components/ui/Table'
 import CompraDetalleModal from '../components/CompraDetalleModal'
 import CompraDeleteModal from '../components/CompraDeleteModal'
 import { getCompras, getCompra, deleteCompra } from '../services/comprasService'
-
+import usePagination from '@/hooks/usePagination'
 function Compras() {
   const [compras, setCompras] = useState([])
   const [compraDetalle, setCompraDetalle] = useState(null)
   const [compraEliminar, setCompraEliminar] = useState(null)
   const [modalDetalle, setModalDetalle] = useState(false)
   const [modalEliminar, setModalEliminar] = useState(false)
+
+   const {
+    paginatedData: comprasPaginadas,
+    page,
+    lastPage,
+    onPageChange,
+  } = usePagination(compras, 10)
 
   const loadCompras = async () => {
     try {
@@ -151,7 +158,13 @@ function Compras() {
           </Link>
         </div>
 
-        <Table columns={columns} data={compras} rowKey="id_compra" />
+        <Table 
+        columns={columns} 
+        data={comprasPaginadas} 
+        rowKey="id_compra"
+        page={page}                 // 👈 4. props de paginación
+        lastPage={lastPage}
+        onPageChange={onPageChange} />
 
         <CompraDetalleModal
           open={modalDetalle}

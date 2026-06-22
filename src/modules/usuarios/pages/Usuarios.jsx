@@ -6,6 +6,7 @@ import '@/styles/components/modal.css'
 import Table from '@/components/ui/Table'
 import Modal from '@/components/ui/Modal'
 import UsuarioForm from '../components/UsuarioForm'
+import usePagination from '@/hooks/usePagination' // 👈 1. IMPORTAR EL HOOK
 import {
   getUsuarios,
   createUsuario,
@@ -29,8 +30,6 @@ function Usuarios() {
 
   const [usuarios, setUsuarios] = useState([])
   const [roles, setRoles] = useState([])
-  const [page, setPage] = useState(1)
-  const [lastPage, setLastPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
 
   const [form, setForm] = useState({
@@ -46,9 +45,12 @@ function Usuarios() {
 
   const [idActual, setIdActual] = useState(null)
 
-  // =========================
-  // CARGAR USUARIOS
-  // =========================
+   const {
+    paginatedData: usuariosPaginados,
+    page,
+    lastPage,
+    onPageChange,
+  } = usePagination(usuarios, 10)
 
   const loadUsuarios = async () => {
 
@@ -57,7 +59,6 @@ function Usuarios() {
       const data = await getUsuarios(page)
 
       setUsuarios(data.data)
-      setLastPage(data.last_page)
 
     } catch {
 
@@ -367,11 +368,11 @@ function Usuarios() {
 
       <Table
         columns={columns}
-        data={usuarios}
+        data={usuariosPaginados}
         rowKey="id_usuario"
         page={page}
         lastPage={lastPage}
-        onPageChange={setPage}
+        onPageChange={onPageChange}
       />
 
       {/* MODAL */}

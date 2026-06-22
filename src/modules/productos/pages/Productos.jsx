@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import Table from '@/components/ui/Table'
 import Modal from '@/components/ui/Modal'
 import ProductoForm from '../components/ProductoForm'
+import usePagination from '@/hooks/usePagination'
 import '@/styles/global.css'
 import '@/styles/components/table.css'
 import '@/styles/components/modal.css'
@@ -51,6 +52,14 @@ function Productos() {
 
   const [editando, setEditando] = useState(false)
   const [idActual, setIdActual] = useState(null)
+
+  // 👇 2. USAR EL HOOK sobre el array completo de productos
+  const {
+    paginatedData: productosPaginados,
+    page,
+    lastPage,
+    onPageChange,
+  } = usePagination(productos, 10) // 10 productos por página, ajusta si quieres
 
   const LoadProductos = async () => {
 
@@ -377,8 +386,11 @@ function Productos() {
 
       <Table
         columns={columns}
-        data={productos}
+        data={productosPaginados}   // 👈 3. usar la página actual, no "productos" completo
         rowKey="id_producto"
+        page={page}                 // 👈 4. props de paginación
+        lastPage={lastPage}
+        onPageChange={onPageChange}
       />
 
       {/* MODAL */}

@@ -6,7 +6,7 @@ import '@/styles/global.css'
 import '@/styles/components/table.css'
 import '@/styles/components/modal.css'
 import Table from '@/components/ui/Table'
-
+import usePagination from '@/hooks/usePagination'
 import {
   Plus,
   Pencil,
@@ -40,6 +40,13 @@ function Proveedores() {
   const [editando, setEditando] = useState(false)
 
   const [idActual, setIdActual] = useState(null)
+
+  const {
+    paginatedData: proveedoresPaginados,
+    page,
+    lastPage,
+    onPageChange,
+  } = usePagination(proveedores, 10)
 
   const loadProveedores = async () => {
     try {
@@ -231,7 +238,14 @@ function Proveedores() {
 
       {/* TABLA */}
 
-      <Table columns={columns} data={proveedores} />
+      <Table 
+        columns={columns}
+        data={proveedoresPaginados}   // 👈 3. usar la página actual, no "proveedores" completo
+        rowKey="id_proveedor"
+        page={page}                 // 👈 4. props de paginación
+        lastPage={lastPage}
+        onPageChange={onPageChange}
+      />
 
       {/* MODAL */}
 
