@@ -19,7 +19,7 @@ const mainNav = [
   { to: '/roles', icon: ShieldCheck, label: 'Roles', roles: [1] },
   { to: '/proveedores', icon: Truck, label: 'Proveedores', roles: [1, 2] },
   { to: '/categorias', icon: Tag, label: 'Categorías', roles: [1, 2] },
-  { to: '/productos', icon: Box, label: 'Productos', roles: [1, 2] },
+  { to: '/productos', icon: Box, label: 'Productos', roles: [1, 2, 3] },
   { to: '/ventas', icon: ReceiptText, label: 'Ventas', roles: [1, 3] },
   { to: '/compras', icon: ShoppingCart, label: 'Compras', roles: [1, 2] },
 ]

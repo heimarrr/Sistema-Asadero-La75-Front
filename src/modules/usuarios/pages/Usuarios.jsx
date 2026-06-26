@@ -72,8 +72,9 @@ function Usuarios() {
     try {
 
       const data = await getRoles()
+      console.log("RESPUESTA ROLES:", data);
 
-      setRoles(data.data)
+      setRoles(data)
 
     } catch {
 
@@ -113,12 +114,15 @@ function Usuarios() {
 
   const openCreate = () => {
 
+    console.log("roles =", roles);
+    console.log("es array =", Array.isArray(roles));
+
     setForm({
       nombre: '',
       usuario: '',
       correo: '',
       contrasena: '',
-      id_rol: roles[0]?.id_rol || '',
+      id_rol: roles?.[0]?.id_rol || '',
       estado: true,
     })
 
