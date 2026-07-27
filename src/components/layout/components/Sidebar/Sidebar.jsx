@@ -17,16 +17,13 @@ const mainNav = [
   { to: '/home', icon: LayoutDashboard, label: 'Dashboard', roles: [1, 2, 3] },
   { to: '/usuarios', icon: Users, label: 'Usuarios', roles: [1] },
   { to: '/roles', icon: ShieldCheck, label: 'Roles', roles: [1] },
-  { to: '/proveedores', icon: Truck, label: 'Proveedores', roles: [1, 2] },
-  { to: '/categorias', icon: Tag, label: 'Categorías', roles: [1, 2] },
+  { to: '/proveedores', icon: Truck, label: 'Proveedores', roles: [1, 3] },
+  { to: '/categorias', icon: Tag, label: 'Categorías', roles: [1, 3] },
   { to: '/productos', icon: Box, label: 'Productos', roles: [1, 2, 3] },
-  { to: '/ventas', icon: ReceiptText, label: 'Ventas', roles: [1, 3] },
-  { to: '/compras', icon: ShoppingCart, label: 'Compras', roles: [1, 2] },
+  { to: '/ventas', icon: ReceiptText, label: 'Ventas', roles: [1, 2] },
+  { to: '/compras', icon: ShoppingCart, label: 'Compras', roles: [1, 3] },
 ]
 
-const systemNav = [
-  { to: '/configuracion', icon: Settings, label: 'Configuración' },
-]
 
 export const Sidebar = ({ logout }) => {
   const { pathname } = useLocation()
@@ -76,21 +73,6 @@ export const Sidebar = ({ logout }) => {
         ))}
       </nav>
 
-      <div className="sb-sep" />
-      <p className="sb-lbl">Sistema</p>
-
-      <nav className="sb-nav">
-        {systemNav.map(({ to, icon: Icon, label }) => (
-          <Link
-            key={to}
-            to={to}
-            className={`sb-a ${pathname === to ? 'on' : ''}`}
-          >
-            <Icon size={17} className="sb-ico" />
-            {label}
-          </Link>
-        ))}
-      </nav>
 
       <div className="sb-foot">
         <div className="sb-user">

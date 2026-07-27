@@ -58,7 +58,7 @@ function App() {
             </Route>
 
             {/* ADMIN + COMPRAS */}
-            <Route element={<RoleRoute roles={[1, 2]} />}>
+            <Route element={<RoleRoute roles={[1, 3]} />}>
               <Route path="/proveedores" element={<Proveedores />} />
               <Route path="/categorias" element={<Categorias />} />
               <Route path="/compras" element={<Compras />} />
@@ -67,7 +67,7 @@ function App() {
             </Route>
 
             {/* ADMIN + CAJERO */}
-            <Route element={<RoleRoute roles={[1, 3]} />}>
+            <Route element={<RoleRoute roles={[1, 2]} />}>
               <Route path="/ventas" element={<Ventas />} />
               <Route path="/ventas/nueva" element={<NuevaVenta />} />
             </Route>

@@ -254,3 +254,25 @@
 .nb-dd-item:hover .nb-dd-ico    { color: #c7d2fe; }
 .nb-dd-item.danger .nb-dd-ico   { color: #f87171; }
 .nb-dd-item.danger:hover .nb-dd-ico { color: #ef4444; }
+
+.nb-user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+}
+
+.nb-user-role {
+  font-size: 11px;
+  color: var(--text-secondary, #888);
+}
+
+.nb-dd-role-badge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  border-radius: 999px;
+  background: var(--accent-bg, #eef2ff);
+  color: var(--accent-text, #4338ca);
+}
