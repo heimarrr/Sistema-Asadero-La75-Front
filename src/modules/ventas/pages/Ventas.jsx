@@ -105,11 +105,11 @@ function Ventas() {
     header: 'Acciones',
     render: (v) => (
       <div className="pg-actions">
-        <button className="pg-btn" onClick={() => verDetalle(v.id_venta)}>
+        <button type="button" className="pg-btn" onClick={() => verDetalle(v.id_venta)}>
           <Eye size={14} />
         </button>
         {v.status == 1 && (
-          <button className="pg-btn del" onClick={() => openEliminar(v)}>
+          <button type="button" className="pg-btn del" onClick={() => openEliminar(v)}>
             <Trash2 size={14} />
           </button>
         )}
@@ -119,7 +119,7 @@ function Ventas() {
   ]
 
   return (
-    <>
+
       <div className="pg">
         <div className="pg-header">
           <div>
@@ -156,7 +156,6 @@ function Ventas() {
           confirmarEliminar={confirmarEliminar}
         />
       </div>
-    </>
   )
 }
 

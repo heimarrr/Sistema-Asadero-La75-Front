@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import api from '@/api/api'
 import toast from 'react-hot-toast'
 import '@/styles/global.css'
 import '@/styles/components/table.css'
 import '@/styles/components/modal.css'
 import Table from '@/components/ui/Table'
-import Modal from '../../../components/ui/Modal';
+import Modal from '../../../components/ui/Modal'
 import CategoriaForm from '../components/CategoriaForm'
 import usePagination from '@/hooks/usePagination'
 import {
@@ -14,7 +13,6 @@ import {
   Trash2,
   ToggleLeft,
   ToggleRight,
-  X,
   Tag,
 } from 'lucide-react'
 
@@ -153,7 +151,6 @@ function Categorias() {
       accessor: 'descripcion',
     },
 
-
     {
       header: 'Estado',
       render: (c) => (
@@ -167,11 +164,16 @@ function Categorias() {
       header: 'Acciones',
       render: (c) => (
         <div className="pg-actions">
-          <button className="pg-btn edit" onClick={() => openEdit(c)}>
+          <button
+            type="button"
+            className="pg-btn edit"
+            onClick={() => openEdit(c)}
+          >
             <Pencil size={14} />
           </button>
 
           <button
+            type="button"
             className="pg-btn toggle"
             onClick={() => toggleEstado(c.id_categoria)}
           >
@@ -179,6 +181,7 @@ function Categorias() {
           </button>
 
           <button
+            type="button"
             className="pg-btn del"
             onClick={() => handleDelete(c.id_categoria)}
           >
@@ -189,10 +192,7 @@ function Categorias() {
     },
   ]
 
-
-
   return (
-    <>
 
       <div className="pg">
         <div className="pg-header">
@@ -201,38 +201,41 @@ function Categorias() {
             <p className="pg-sub">{categorias.length} Categorias</p>
           </div>
 
-          <button className="pg-btn-new" onClick={openCreate}>
+          <button 
+          type="button"
+          className="pg-btn-new" onClick={openCreate}>
             <Plus size={16} /> Nueva
           </button>
         </div>
 
         {/* TABLA */}
-        
-        <Table 
-        columns={columns} 
-        data={categoriasPaginadas}
-        rowKey="id_categoria"
-        page={page}                 // 👈 4. props de paginación
-        lastPage={lastPage}
-        onPageChange={onPageChange} />
+
+        <Table
+          columns={columns}
+          data={categoriasPaginadas}
+          rowKey="id_categoria"
+          page={page} // 👈 4. props de paginación
+          lastPage={lastPage}
+          onPageChange={onPageChange}
+        />
 
         {/* MODAL */}
 
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title={editando ? 'Editar Categoría' : 'Nueva Categoría'}
-      >
-        <CategoriaForm
-          form={form}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
+        <Modal
+          open={modalOpen}
           onClose={() => setModalOpen(false)}
-          editando={editando}
-        />
-      </Modal>
+          title={editando ? 'Editar Categoría' : 'Nueva Categoría'}
+        >
+          <CategoriaForm
+            form={form}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            onClose={() => setModalOpen(false)}
+            editando={editando}
+          />
+        </Modal>
       </div>
-    </>
+    
   )
 }
 

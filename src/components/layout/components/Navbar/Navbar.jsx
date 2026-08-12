@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Bell, Search, ChevronDown, User, LogOut, Settings } from "lucide-react";
+import {
+  Bell,
+  Search,
+  ChevronDown,
+  User,
+  LogOut,
+  Settings,
+} from "lucide-react";
 import "./Navbar.css";
 
 // Mismo criterio que en el Sidebar: el rol se guarda como número en localStorage
@@ -31,7 +38,12 @@ export const Navbar = ({ logout }) => {
   return (
     <header className="nb">
       <div className="nb-search">
-        <Search size={17} className="nb-search-ico" aria-hidden="true" />
+        <Search
+          size={17}
+          className="nb-search-ico"
+          aria-hidden="true"
+        />
+
         <input
           type="search"
           placeholder="Buscar..."
@@ -41,14 +53,24 @@ export const Navbar = ({ logout }) => {
       </div>
 
       <div className="nb-right">
-        <button className="nb-icon-btn" aria-label="Notificaciones">
-          <Bell size={19} />
-          <span className="nb-badge" aria-label="3 notificaciones">3</span>
+        <button
+          type="button"
+          className="nb-icon-btn"
+          aria-label="Notificaciones"
+        >
+          <Bell size={19} aria-hidden="true" />
+          <span
+            className="nb-badge"
+            aria-label="3 notificaciones"
+          >
+            3
+          </span>
         </button>
 
         <div className="nb-divider" aria-hidden="true" />
 
         <button
+          type="button"
           className="nb-user-btn"
           onClick={() => setDropdownOpen((o) => !o)}
           aria-expanded={dropdownOpen}
@@ -60,10 +82,12 @@ export const Navbar = ({ logout }) => {
               alt={`Avatar de ${nombre}`}
             />
           </div>
+
           <div className="nb-user-info">
             <span className="nb-user-name">{nombre}</span>
             <span className="nb-user-role">{roleName}</span>
           </div>
+
           <ChevronDown
             size={16}
             className={`nb-chevron ${dropdownOpen ? "open" : ""}`}
@@ -74,10 +98,12 @@ export const Navbar = ({ logout }) => {
 
       {dropdownOpen && (
         <>
-          <div
-            style={{ position: "fixed", inset: 0, zIndex: 40 }}
+          {/* Botón invisible utilizado para cerrar el menú al hacer clic fuera */}
+          <button
+            type="button"
+            className="nb-dropdown-overlay"
             onClick={() => setDropdownOpen(false)}
-            aria-hidden="true"
+            aria-label="Cerrar menú de usuario"
           />
 
           <div className="nb-dropdown" role="menu">
@@ -89,20 +115,45 @@ export const Navbar = ({ logout }) => {
 
             <div className="nb-dd-sep" />
 
-            <button className="nb-dd-item" role="menuitem">
-              <User size={17} className="nb-dd-ico" aria-hidden="true" />
+            <button
+              type="button"
+              className="nb-dd-item"
+              role="menuitem"
+            >
+              <User
+                size={17}
+                className="nb-dd-ico"
+                aria-hidden="true"
+              />
               Mi perfil
             </button>
 
-            <button className="nb-dd-item" role="menuitem">
-              <Settings size={17} className="nb-dd-ico" aria-hidden="true" />
+            <button
+              type="button"
+              className="nb-dd-item"
+              role="menuitem"
+            >
+              <Settings
+                size={17}
+                className="nb-dd-ico"
+                aria-hidden="true"
+              />
               Ajustes
             </button>
 
             <div className="nb-dd-sep" />
 
-            <button className="nb-dd-item danger" onClick={logout} role="menuitem">
-              <LogOut size={17} className="nb-dd-ico" aria-hidden="true" />
+            <button
+              type="button"
+              className="nb-dd-item danger"
+              onClick={logout}
+              role="menuitem"
+            >
+              <LogOut
+                size={17}
+                className="nb-dd-ico"
+                aria-hidden="true"
+              />
               Cerrar sesión
             </button>
           </div>

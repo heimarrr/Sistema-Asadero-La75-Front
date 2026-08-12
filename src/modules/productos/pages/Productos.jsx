@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import api from '@/api/api'
 import toast from 'react-hot-toast'
 import Table from '@/components/ui/Table'
 import Modal from '@/components/ui/Modal'
@@ -320,6 +319,7 @@ function Productos() {
         <div className="pg-actions">
 
           <button
+          type="button"
             className="pg-btn edit"
             onClick={() => openEdit(p)}
           >
@@ -327,6 +327,7 @@ function Productos() {
           </button>
 
           <button
+            type="button"
             className="pg-btn toggle"
             onClick={() =>
               toggleEstado(p.id_producto)
@@ -339,6 +340,7 @@ function Productos() {
           </button>
 
           <button
+            type="button"
             className="pg-btn del"
             onClick={() =>
               handleDelete(p.id_producto)
@@ -373,6 +375,7 @@ function Productos() {
         </div>
 
         <button
+          type="button"
           className="pg-btn-new"
           onClick={openCreate}
         >

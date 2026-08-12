@@ -30,6 +30,7 @@ function Modal({
           </h3>
 
           <button
+            type="button"
             onClick={onClose}
             style={{
               background: 'none',

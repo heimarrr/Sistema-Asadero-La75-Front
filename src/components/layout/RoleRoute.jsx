@@ -7,7 +7,6 @@ const RoleRoute = ({ roles }) => {
     return <Navigate to="/" replace />
   }
 
-  // OJO: en tu backend es "rol", no "rol_id"
   return roles.includes(user.rol)
     ? <Outlet />
     : <Navigate to="/home" replace />

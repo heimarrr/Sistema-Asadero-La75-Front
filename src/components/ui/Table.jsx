@@ -80,6 +80,7 @@ function Table({
 
           {/* ANTERIOR */}
           <button
+            type="button"
             className="pagination-btn pagination-arrow"
             disabled={page === 1}
             onClick={() => onPageChange(page - 1)}
@@ -94,6 +95,7 @@ function Table({
               <span key={`dots-${i}`} className="pagination-dots">···</span>
             ) : (
               <button
+                type="button"
                 key={p}
                 className={`pagination-btn ${page === p ? 'active' : ''}`}
                 onClick={() => onPageChange(p)}
@@ -107,6 +109,7 @@ function Table({
 
           {/* SIGUIENTE */}
           <button
+            type="button"
             className="pagination-btn pagination-arrow"
             disabled={page === lastPage}
             onClick={() => onPageChange(page + 1)}

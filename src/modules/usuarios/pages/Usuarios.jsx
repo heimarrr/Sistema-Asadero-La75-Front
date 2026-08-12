@@ -308,6 +308,7 @@ function Usuarios() {
         <div className="pg-actions">
 
           <button
+            type="button"
             className="pg-btn edit"
             onClick={() => openEdit(u)}
           >
@@ -315,6 +316,7 @@ function Usuarios() {
           </button>
 
           <button
+            type="button"
             className="pg-btn toggle"
             onClick={() =>
               toggleEstado(u.id_usuario)
@@ -327,6 +329,7 @@ function Usuarios() {
           </button>
 
           <button
+            type="button"
             className="pg-btn del"
             onClick={() =>
               handleDelete(u.id_usuario)
@@ -359,6 +362,7 @@ function Usuarios() {
         </div>
 
         <button
+          type="button"
           className="pg-btn-new"
           onClick={openCreate}
         >

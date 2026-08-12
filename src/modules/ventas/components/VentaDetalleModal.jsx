@@ -11,7 +11,7 @@ function VentaDetalleModal({ open, onClose, ventaDetalle }) {
 
         <div className="pg-modal-header">
           <h3>Detalle Venta #{ventaDetalle?.id_venta}</h3>
-          <button className="pg-btn" onClick={onClose}>
+          <button type="button" className="pg-btn" onClick={onClose}>
             <X size={16} />
           </button>
         </div>
@@ -50,7 +50,9 @@ function VentaDetalleModal({ open, onClose, ventaDetalle }) {
         </div>
 
         <div className="pg-modal-footer">
-          <button className="pg-btn-cancel" onClick={onClose}>Cerrar</button>
+          <button type="button" className="pg-btn-cancel" onClick={onClose}>
+            Cerrar
+          </button>
         </div>
 
       </div>

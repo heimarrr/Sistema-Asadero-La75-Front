@@ -10,7 +10,7 @@
   flex-shrink: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-width: none;        /* oculta scroll en firefox */
+  scrollbar-width: none;
 }
 
 .sb::-webkit-scrollbar { display: none; }

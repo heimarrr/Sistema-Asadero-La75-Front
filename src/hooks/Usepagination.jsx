@@ -1,16 +1,5 @@
 import { useState, useMemo } from 'react'
 
-/**
- * Hook de paginación en el cliente.
- * Recibe el array COMPLETO de datos y un tamaño de página,
- * y te devuelve solo la "rebanada" que corresponde a la página actual,
- * junto con todo lo necesario para controlar el componente <Table />.
- *
- * Uso:
- *   const {
- *     paginatedData, page, lastPage, setPage
- *   } = usePagination(productos, 10)
- */
 function usePagination(data = [], pageSize = 10) {
   const [page, setPage] = useState(1)
 

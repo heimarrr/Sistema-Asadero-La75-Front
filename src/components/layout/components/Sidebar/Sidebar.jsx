@@ -8,7 +8,6 @@ import {
   Box,
   ReceiptText,
   ShoppingCart,
-  Settings,
   LogOut,
 } from 'lucide-react'
 import './Sidebar.css'
@@ -90,7 +89,7 @@ export const Sidebar = ({ logout }) => {
           </div>
         </div>
 
-        <button className="sb-out" onClick={logout}>
+        <button type="button" className="sb-out" onClick={logout}>
           <LogOut size={17} />
           Cerrar sesión
         </button>

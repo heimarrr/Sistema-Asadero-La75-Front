@@ -13,7 +13,6 @@ import {
   Trash2,
   ToggleLeft,
   ToggleRight,
-  X,
   Shield,
 } from 'lucide-react'
 
@@ -185,18 +184,27 @@ function Roles() {
       header: 'Acciones',
       render: (r) => (
         <div className="pg-actions">
-          <button className="pg-btn edit" onClick={() => openEdit(r)}>
+          <button
+            type="button"
+            className="pg-btn edit"
+            onClick={() => openEdit(r)}
+          >
             <Pencil size={14} />
           </button>
 
           <button
+            type="button"
             className="pg-btn toggle"
             onClick={() => toggleEstado(r.id_rol)}
           >
             {r.status ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
           </button>
 
-          <button className="pg-btn del" onClick={() => handleDelete(r.id_rol)}>
+          <button
+            type="button"
+            className="pg-btn del"
+            onClick={() => handleDelete(r.id_rol)}
+          >
             <Trash2 size={14} />
           </button>
         </div>
@@ -213,7 +221,7 @@ function Roles() {
           <p className="pg-sub">{roles?.length || 0} roles</p>
         </div>
 
-        <button className="pg-btn-new" onClick={openCreate}>
+        <button type="button" className="pg-btn-new" onClick={openCreate}>
           <Plus size={16} />
           Nuevo
         </button>

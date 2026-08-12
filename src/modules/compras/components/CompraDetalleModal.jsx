@@ -31,6 +31,7 @@ function CompraDetalleModal({
           </h3>
 
           <button
+            type="button"
             className="pg-btn"
             onClick={onClose}
           >
@@ -120,6 +121,7 @@ function CompraDetalleModal({
         <div className="pg-modal-footer">
 
           <button
+            type="button"
             className="pg-btn-cancel"
             onClick={onClose}
           >

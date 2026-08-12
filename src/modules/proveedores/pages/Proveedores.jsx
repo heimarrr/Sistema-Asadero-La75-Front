@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import ProveedorForm from '../components/ProveedorForm'
-import Modal from '../../../components/ui/Modal';
+import Modal from '../../../components/ui/Modal'
 import '@/styles/global.css'
 import '@/styles/components/table.css'
 import '@/styles/components/modal.css'
@@ -197,11 +197,16 @@ function Proveedores() {
       header: 'Acciones',
       render: (p) => (
         <div className="pg-actions">
-          <button className="pg-btn edit" onClick={() => openEdit(p)}>
+          <button
+            type="button"
+            className="pg-btn edit"
+            onClick={() => openEdit(p)}
+          >
             <Pencil size={14} />
           </button>
 
           <button
+            type="button"
             className="pg-btn toggle"
             onClick={() => toggleEstado(p.id_proveedor)}
           >
@@ -209,6 +214,7 @@ function Proveedores() {
           </button>
 
           <button
+            type="button"
             className="pg-btn del"
             onClick={() => handleDelete(p.id_proveedor)}
           >
@@ -230,7 +236,7 @@ function Proveedores() {
           <p className="pg-sub">{proveedores.length} registrados</p>
         </div>
 
-        <button className="pg-btn-new" onClick={openCreate}>
+        <button type="button" className="pg-btn-new" onClick={openCreate}>
           <Plus size={16} />
           Nuevo
         </button>
@@ -238,11 +244,11 @@ function Proveedores() {
 
       {/* TABLA */}
 
-      <Table 
+      <Table
         columns={columns}
-        data={proveedoresPaginados}   // 👈 3. usar la página actual, no "proveedores" completo
+        data={proveedoresPaginados} // 👈 3. usar la página actual, no "proveedores" completo
         rowKey="id_proveedor"
-        page={page}                 // 👈 4. props de paginación
+        page={page} // 👈 4. props de paginación
         lastPage={lastPage}
         onPageChange={onPageChange}
       />
