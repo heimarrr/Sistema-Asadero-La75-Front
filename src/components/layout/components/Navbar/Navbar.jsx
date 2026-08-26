@@ -1,12 +1,5 @@
-import { useState } from "react";
-import {
-  Bell,
-  Search,
-  ChevronDown,
-  User,
-  LogOut,
-  Settings,
-} from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { ChevronDown, LogOut } from "lucide-react";
 import "./Navbar.css";
 
 // Mismo criterio que en el Sidebar: el rol se guarda como número en localStorage
@@ -18,12 +11,14 @@ const ROLES = {
 
 export const Navbar = ({ logout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const menuRef = useRef(null);
+  const triggerRef = useRef(null);
 
   // Igual que en el Sidebar: obtenemos el usuario de forma segura
   const getUserData = () => {
     try {
       return JSON.parse(localStorage.getItem("user")) || null;
-    } catch (error) {
+    } catch {
       return null;
     }
   };
@@ -35,130 +30,106 @@ export const Navbar = ({ logout }) => {
   const nombre = user?.nombre || "Usuario Anónimo";
   const correo = user?.correo || "sin-correo@correo.com";
 
+  // Cierra el menú al hacer clic fuera o al presionar Escape
+  useEffect(() => {
+    if (!dropdownOpen) return;
+
+    const handleClickOutside = (event) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        triggerRef.current &&
+        !triggerRef.current.contains(event.target)
+      ) {
+        setDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setDropdownOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [dropdownOpen]);
+
+  const closeDropdown = () => setDropdownOpen(false);
+
   return (
     <header className="nb">
-      <div className="nb-search">
-        <Search
-          size={17}
-          className="nb-search-ico"
-          aria-hidden="true"
-        />
-
-        <input
-          type="search"
-          placeholder="Buscar..."
-          className="nb-search-input"
-          aria-label="Buscar"
-        />
-      </div>
-
       <div className="nb-right">
-        <button
-          type="button"
-          className="nb-icon-btn"
-          aria-label="Notificaciones"
-        >
-          <Bell size={19} aria-hidden="true" />
-          <span
-            className="nb-badge"
-            aria-label="3 notificaciones"
-          >
-            3
-          </span>
-        </button>
-
-        <div className="nb-divider" aria-hidden="true" />
-
-        <button
-          type="button"
-          className="nb-user-btn"
-          onClick={() => setDropdownOpen((o) => !o)}
-          aria-expanded={dropdownOpen}
-          aria-haspopup="menu"
-        >
-          <div className="nb-user-avatar">
-            <img
-              src={`https://api.dicebear.com/8.x/notionists/svg?seed=${nombre}`}
-              alt={`Avatar de ${nombre}`}
-            />
-          </div>
-
-          <div className="nb-user-info">
-            <span className="nb-user-name">{nombre}</span>
-            <span className="nb-user-role">{roleName}</span>
-          </div>
-
-          <ChevronDown
-            size={16}
-            className={`nb-chevron ${dropdownOpen ? "open" : ""}`}
-            aria-hidden="true"
-          />
-        </button>
-      </div>
-
-      {dropdownOpen && (
-        <>
-          {/* Botón invisible utilizado para cerrar el menú al hacer clic fuera */}
+        <div className="nb-user-menu">
           <button
+            ref={triggerRef}
             type="button"
-            className="nb-dropdown-overlay"
-            onClick={() => setDropdownOpen(false)}
-            aria-label="Cerrar menú de usuario"
-          />
-
-          <div className="nb-dropdown" role="menu">
-            <div className="nb-dd-header">
-              <p className="nb-dd-name">{nombre}</p>
-              <p className="nb-dd-email">{correo}</p>
-              <span className="nb-dd-role-badge">{roleName}</span>
+            id="nb-user-trigger"
+            className="nb-user-btn"
+            onClick={() => setDropdownOpen((o) => !o)}
+            aria-expanded={dropdownOpen}
+            aria-haspopup="menu"
+            aria-controls="nb-user-dropdown"
+          >
+            <div className="nb-user-avatar">
+              <img
+                src={`https://api.dicebear.com/8.x/notionists/svg?seed=${encodeURIComponent(
+                  nombre
+                )}`}
+                alt=""
+              />
             </div>
 
-            <div className="nb-dd-sep" />
+            <div className="nb-user-info">
+              <span className="nb-user-name">{nombre}</span>
+              <span className="nb-user-role">{roleName}</span>
+            </div>
 
-            <button
-              type="button"
-              className="nb-dd-item"
-              role="menuitem"
+            <ChevronDown
+              size={16}
+              className={`nb-chevron ${dropdownOpen ? "open" : ""}`}
+              aria-hidden="true"
+            />
+          </button>
+
+          {dropdownOpen && (
+            <div
+              ref={menuRef}
+              id="nb-user-dropdown"
+              className="nb-dropdown"
+              role="menu"
+              aria-labelledby="nb-user-trigger"
             >
-              <User
-                size={17}
-                className="nb-dd-ico"
-                aria-hidden="true"
-              />
-              Mi perfil
-            </button>
+              <div className="nb-dd-header">
+                <p className="nb-dd-name">{nombre}</p>
+                <p className="nb-dd-email">{correo}</p>
+                <span className="nb-dd-role-badge">{roleName}</span>
+              </div>
 
-            <button
-              type="button"
-              className="nb-dd-item"
-              role="menuitem"
-            >
-              <Settings
-                size={17}
-                className="nb-dd-ico"
-                aria-hidden="true"
-              />
-              Ajustes
-            </button>
+              <div className="nb-dd-sep" />
 
-            <div className="nb-dd-sep" />
-
-            <button
-              type="button"
-              className="nb-dd-item danger"
-              onClick={logout}
-              role="menuitem"
-            >
-              <LogOut
-                size={17}
-                className="nb-dd-ico"
-                aria-hidden="true"
-              />
-              Cerrar sesión
-            </button>
-          </div>
-        </>
-      )}
+              <button
+                type="button"
+                className="nb-dd-item danger"
+                role="menuitem"
+                onClick={() => {
+                  closeDropdown();
+                  logout?.();
+                }}
+              >
+                <LogOut size={17} className="nb-dd-ico" aria-hidden="true" />
+                Cerrar sesión
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
     </header>
   );
 };

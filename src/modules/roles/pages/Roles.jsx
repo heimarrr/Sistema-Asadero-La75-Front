@@ -7,6 +7,8 @@ import Table from '@/components/ui/Table'
 import Modal from '../../../components/ui/Modal'
 import usePagination from '@/hooks/usePagination' // 👈 1. IMPORTAR EL HOOK
 import RolForm from '../components/RolForm'
+import useSearch from '@/hooks/useSearch' // 👈 NUEVO
+
 import {
   Plus,
   Pencil,
@@ -24,6 +26,8 @@ import {
   toggleRolEstado,
 } from '@/modules/roles/services/rolesService'
 
+const ROLES_SEARCH_KEYS = ['nombre', 'descripcion']
+
 function Roles() {
   const [roles, setRoles] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
@@ -38,11 +42,23 @@ function Roles() {
   const [idActual, setIdActual] = useState(null)
 
   const {
+      search,
+      setSearch,
+      filteredData: rolesFiltrados,
+    } = useSearch(roles, ROLES_SEARCH_KEYS)
+
+  const {
     paginatedData: rolesPaginados,
     page,
     lastPage,
     onPageChange,
-  } = usePagination(roles, 10) // 10 productos por página, ajusta si quieres
+  } = usePagination(rolesFiltrados, 10) // 10 productos por página, ajusta si quieres
+
+
+  const handleSearchChange = (value) => {
+    setSearch(value)
+    onPageChange(1)
+  }
 
   // cargar roles
   const loadRoles = async () => {
@@ -235,6 +251,10 @@ function Roles() {
         page={page}                 // 👈 4. props de paginación
         lastPage={lastPage}
         onPageChange={onPageChange}
+        searchable
+        searchPlaceholder="Buscar..."
+        searchValue={search}
+        onSearchChange={handleSearchChange}
       />
 
       {/* MODAL */}

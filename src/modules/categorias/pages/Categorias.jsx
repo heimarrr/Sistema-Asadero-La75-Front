@@ -7,6 +7,7 @@ import Table from '@/components/ui/Table'
 import Modal from '../../../components/ui/Modal'
 import CategoriaForm from '../components/CategoriaForm'
 import usePagination from '@/hooks/usePagination'
+import useSearch from '@/hooks/useSearch' // 👈 NUEVO
 import {
   Plus,
   Pencil,
@@ -24,6 +25,8 @@ import {
   toggleCategoriaEstado,
 } from '../services/categoriasService'
 
+const CATEGORIAS_SEARCH_KEYS = ['nombre', 'descripcion']
+
 function Categorias() {
   const [categorias, setCategorias] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
@@ -38,11 +41,23 @@ function Categorias() {
   const [idActual, setIdActual] = useState(null)
 
   const {
+    search,
+    setSearch,
+    filteredData: categoriasFiltradas,
+  } = useSearch(categorias, CATEGORIAS_SEARCH_KEYS)
+
+  const {
     paginatedData: categoriasPaginadas,
     page,
     lastPage,
     onPageChange,
-  } = usePagination(categorias, 10)
+  } = usePagination(categoriasFiltradas, 10)
+
+  const handleSearchChange = (value) => {
+    setSearch(value)
+    onPageChange(1)
+  }
+
 
   const LoadCategorias = async () => {
     try {
@@ -193,49 +208,49 @@ function Categorias() {
   ]
 
   return (
-
-      <div className="pg">
-        <div className="pg-header">
-          <div>
-            <h1 className="pg-title">Categorías</h1>
-            <p className="pg-sub">{categorias.length} Categorias</p>
-          </div>
-
-          <button 
-          type="button"
-          className="pg-btn-new" onClick={openCreate}>
-            <Plus size={16} /> Nueva
-          </button>
+    <div className="pg">
+      <div className="pg-header">
+        <div>
+          <h1 className="pg-title">Categorías</h1>
+          <p className="pg-sub">{categorias.length} Categorias</p>
         </div>
 
-        {/* TABLA */}
-
-        <Table
-          columns={columns}
-          data={categoriasPaginadas}
-          rowKey="id_categoria"
-          page={page} // 👈 4. props de paginación
-          lastPage={lastPage}
-          onPageChange={onPageChange}
-        />
-
-        {/* MODAL */}
-
-        <Modal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          title={editando ? 'Editar Categoría' : 'Nueva Categoría'}
-        >
-          <CategoriaForm
-            form={form}
-            handleChange={handleChange}
-            handleSubmit={handleSubmit}
-            onClose={() => setModalOpen(false)}
-            editando={editando}
-          />
-        </Modal>
+        <button type="button" className="pg-btn-new" onClick={openCreate}>
+          <Plus size={16} /> Nueva
+        </button>
       </div>
-    
+
+      {/* TABLA */}
+
+      <Table
+        columns={columns}
+        data={categoriasPaginadas}
+        rowKey="id_categoria"
+        page={page} // 👈 4. props de paginación
+        lastPage={lastPage}
+        onPageChange={onPageChange}
+        searchable
+        searchPlaceholder="Buscar..."
+        searchValue={search}
+        onSearchChange={handleSearchChange}
+      />
+
+      {/* MODAL */}
+
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={editando ? 'Editar Categoría' : 'Nueva Categoría'}
+      >
+        <CategoriaForm
+          form={form}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          onClose={() => setModalOpen(false)}
+          editando={editando}
+        />
+      </Modal>
+    </div>
   )
 }
 

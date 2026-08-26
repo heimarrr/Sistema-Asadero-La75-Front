@@ -10,26 +10,44 @@ import CompraDetalleModal from '../components/CompraDetalleModal'
 import CompraDeleteModal from '../components/CompraDeleteModal'
 import { getCompras, getCompra, deleteCompra } from '../services/comprasService'
 import usePagination from '@/hooks/usePagination'
+import useSearch from '@/hooks/useSearch' // 👈 NUEVO
+
+const COMPRAS_SEARCH_KEYS = [
+  'id_compra', 
+  'fecha', 
+  'proveedor.nombre',
+  'usuario.nombre',]
+
 function Compras() {
   const [compras, setCompras] = useState([])
   const [compraDetalle, setCompraDetalle] = useState(null)
   const [compraEliminar, setCompraEliminar] = useState(null)
   const [modalDetalle, setModalDetalle] = useState(false)
   const [modalEliminar, setModalEliminar] = useState(false)
+  
+  const {
+    search,
+    setSearch,
+    filteredData: comprasFiltrados,
+  } = useSearch(compras, COMPRAS_SEARCH_KEYS)
 
-   const {
+  const {
     paginatedData: comprasPaginadas,
     page,
     lastPage,
     onPageChange,
-  } = usePagination(compras, 10)
+  } = usePagination(comprasFiltrados, 10)
+
+  const handleSearchChange = (value) => {
+    setSearch(value)
+    onPageChange(1)
+  }
 
   const loadCompras = async () => {
     try {
       const data = await getCompras()
       setCompras(data || [])
     } catch (error) {
-
       toast.error('Error al cargar compras')
     }
   }
@@ -143,43 +161,46 @@ function Compras() {
   ]
 
   return (
-    <>
-      <div className="pg">
-        <div className="pg-header">
-          <div>
-            <h1 className="pg-title">Compras</h1>
+    <div className="pg">
+      <div className="pg-header">
+        <div>
+          <h1 className="pg-title">Compras</h1>
 
-            <p className="pg-sub">{compras.length} registradas</p>
-          </div>
-
-          <Link to="/compras/nueva" className="pg-btn-new">
-            <ShoppingCart size={16} />
-            Nueva Compra
-          </Link>
+          <p className="pg-sub">{compras.length} registradas</p>
         </div>
 
-        <Table 
-        columns={columns} 
-        data={comprasPaginadas} 
-        rowKey="id_compra"
-        page={page}                 // 👈 4. props de paginación
-        lastPage={lastPage}
-        onPageChange={onPageChange} />
-
-        <CompraDetalleModal
-          open={modalDetalle}
-          onClose={() => setModalDetalle(false)}
-          compraDetalle={compraDetalle}
-        />
-
-        <CompraDeleteModal
-          open={modalEliminar}
-          onClose={() => setModalEliminar(false)}
-          compraEliminar={compraEliminar}
-          confirmarEliminar={confirmarEliminar}
-        />
+        <Link to="/compras/nueva" className="pg-btn-new">
+          <ShoppingCart size={16} />
+          Nueva Compra
+        </Link>
       </div>
-    </>
+
+      <Table
+        columns={columns}
+        data={comprasPaginadas}
+        rowKey="id_compra"
+        page={page} // 👈 4. props de paginación
+        lastPage={lastPage}
+        onPageChange={onPageChange}
+        searchable
+        searchPlaceholder="Buscar..."
+        searchValue={search}
+        onSearchChange={handleSearchChange}
+      />
+
+      <CompraDetalleModal
+        open={modalDetalle}
+        onClose={() => setModalDetalle(false)}
+        compraDetalle={compraDetalle}
+      />
+
+      <CompraDeleteModal
+        open={modalEliminar}
+        onClose={() => setModalEliminar(false)}
+        compraEliminar={compraEliminar}
+        confirmarEliminar={confirmarEliminar}
+      />
+    </div>
   )
 }
 

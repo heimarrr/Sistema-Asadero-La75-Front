@@ -86,7 +86,9 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 16px;                            /* ✅ más espacio entre campos */
+  gap: 16px;
+  min-width: 0;
+  overflow-x: hidden;                
 }
 
 /* FOOTER */
@@ -181,4 +183,56 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+/* Agregar esto junto a las demás reglas de .pg-modal */
+
+.pg-modal--wide {
+  max-width: 600px;
+}
+
+.pg-modal-body .pg-table-container {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto !important;
+}
+
+
+/* Tabla compacta para modales: anula los min-width de 800px/170px/220px/120px
+   pensados para tablas grandes, y hace que las columnas se repartan
+   proporcionalmente dentro del ancho del modal, sin scroll. */
+.pg-modal-body .pg-table {
+  min-width: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+ 
+.pg-modal-body .pg-table th,
+.pg-modal-body .pg-table td {
+  min-width: 0;
+  padding: 12px 14px;
+  white-space: normal;
+  word-break: break-word;
+}
+ 
+.pg-modal-body .pg-table th:nth-child(1),
+.pg-modal-body .pg-table td:nth-child(1) {
+  width: 40%;
+}
+ 
+.pg-modal-body .pg-table th:nth-child(2),
+.pg-modal-body .pg-table td:nth-child(2) {
+  width: 20%;
+}
+ 
+.pg-modal-body .pg-table th:nth-child(3),
+.pg-modal-body .pg-table td:nth-child(3) {
+  width: 20%;
+}
+ 
+.pg-modal-body .pg-table th:nth-child(4),
+.pg-modal-body .pg-table td:nth-child(4) {
+  width: 20%;
 }

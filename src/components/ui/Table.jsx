@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react' // o el ícono que uses
+import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
 
 function Table({
   columns,
@@ -9,13 +9,12 @@ function Table({
   page = 1,
   lastPage = 1,
   onPageChange = () => {},
+  searchable = false,
+  searchPlaceholder = 'Buscar...',
+  searchValue = '',
+  onSearchChange = () => {},
 }) {
 
-  if (loading) {
-    return <div className="pg-card pg-loading">Cargando...</div>
-  }
-
-  // Genera el array de páginas con "..." cuando hay muchas
   const getPages = () => {
     if (lastPage <= 7) {
       return Array.from({ length: lastPage }, (_, i) => i + 1)
@@ -34,91 +33,118 @@ function Table({
   return (
     <div className="pg-card table-wrapper">
 
-      {/* TABLA */}
-      <div className="pg-table-container">
-        <table className="pg-table">
+      {/* BUSCADOR */}
+      {searchable && (
+        <div className="table-search">
+          <Search size={16} className="table-search-icon" />
+          <input
+            type="text"
+            className="table-search-input"
+            placeholder={searchPlaceholder}
+            value={searchValue}
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
+          {searchValue && (
+            <button
+              type="button"
+              className="table-search-clear"
+              onClick={() => onSearchChange('')}
+              aria-label="Limpiar búsqueda"
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
+      )}
 
-          <thead>
-            <tr>
-              {columns.map((col) => (
-                <th key={col.accessor || col.id || col.header}>
-                  {col.header}
-                </th>
-              ))}
-            </tr>
-          </thead>
+      {loading ? (
+        <div className="pg-loading">Cargando...</div>
+      ) : (
+        <>
+          {/* TABLA */}
+          <div className="pg-table-container">
+            <table className="pg-table">
 
-          <tbody>
-            {data.length > 0 ? (
-              data.map((row, rowIndex) => {
-                const currentKey = row[rowKey] !== undefined ? row[rowKey] : rowIndex
-                return (
-                  <tr key={currentKey}>
-                    {columns.map((col) => (
-                      <td key={col.accessor || col.id || col.header}>
-                        {col.render ? col.render(row) : row[col.accessor] || '-'}
-                      </td>
-                    ))}
+              <thead>
+                <tr>
+                  {columns.map((col) => (
+                    <th key={col.accessor || col.id || col.header}>
+                      {col.header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody>
+                {data.length > 0 ? (
+                  data.map((row, rowIndex) => {
+                    const currentKey = row[rowKey] !== undefined ? row[rowKey] : rowIndex
+                    return (
+                      <tr key={currentKey}>
+                        {columns.map((col) => (
+                          <td key={col.accessor || col.id || col.header}>
+                            {col.render ? col.render(row) : row[col.accessor] || '-'}
+                          </td>
+                        ))}
+                      </tr>
+                    )
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan={columns.length} style={{ textAlign: 'center' }}>
+                      {emptyMessage}
+                    </td>
                   </tr>
-                )
-              })
-            ) : (
-              <tr>
-                <td colSpan={columns.length} style={{ textAlign: 'center' }}>
-                  {emptyMessage}
-                </td>
-              </tr>
-            )}
-          </tbody>
+                )}
+              </tbody>
 
-        </table>
-      </div>
+            </table>
+          </div>
 
-      {/* PAGINACIÓN */}
-      {lastPage > 1 && (
-        <div className="table-pagination">
+          {/* PAGINACIÓN */}
+          {lastPage > 1 && (
+            <div className="table-pagination">
 
-          {/* ANTERIOR */}
-          <button
-            type="button"
-            className="pagination-btn pagination-arrow"
-            disabled={page === 1}
-            onClick={() => onPageChange(page - 1)}
-            aria-label="Página anterior"
-          >
-            <ChevronLeft size={16} />
-          </button>
-
-          {/* NÚMEROS */}
-          {getPages().map((p, i) =>
-            p === '...' ? (
-              <span key={`dots-${i}`} className="pagination-dots">···</span>
-            ) : (
               <button
                 type="button"
-                key={p}
-                className={`pagination-btn ${page === p ? 'active' : ''}`}
-                onClick={() => onPageChange(p)}
-                aria-label={`Página ${p}`}
-                aria-current={page === p ? 'page' : undefined}
+                className="pagination-btn pagination-arrow"
+                disabled={page === 1}
+                onClick={() => onPageChange(page - 1)}
+                aria-label="Página anterior"
               >
-                {p}
+                <ChevronLeft size={16} />
               </button>
-            )
+
+              {getPages().map((p, i) =>
+                p === '...' ? (
+                  <span key={`dots-${i}`} className="pagination-dots">···</span>
+                ) : (
+                  <button
+                    type="button"
+                    key={p}
+                    className={`pagination-btn ${page === p ? 'active' : ''}`}
+                    onClick={() => onPageChange(p)}
+                    aria-label={`Página ${p}`}
+                    aria-current={page === p ? 'page' : undefined}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+
+              <button
+                type="button"
+                className="pagination-btn pagination-arrow"
+                disabled={page === lastPage}
+                onClick={() => onPageChange(page + 1)}
+                aria-label="Página siguiente"
+              >
+                <ChevronRight size={16} />
+              </button>
+
+            </div>
           )}
-
-          {/* SIGUIENTE */}
-          <button
-            type="button"
-            className="pagination-btn pagination-arrow"
-            disabled={page === lastPage}
-            onClick={() => onPageChange(page + 1)}
-            aria-label="Página siguiente"
-          >
-            <ChevronRight size={16} />
-          </button>
-
-        </div>
+        </>
       )}
 
     </div>

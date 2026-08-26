@@ -12,12 +12,12 @@
 ======================== */
 .pg-card {
   background: #05102c;
-  border: 1px solid rgba(255,255,255,0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 18px;
   overflow: hidden;
-  box-shadow:
+  box-shadow: 
     0 10px 30px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255,255,255,0.02);
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
@@ -26,9 +26,10 @@
    CONTENEDOR TABLA
 ======================== */
 .pg-table-container {
+  width: 100%;
   overflow-x: auto;
   scrollbar-width: thin;
-  scrollbar-color: #2a2d36 transparent;
+  scrollbar-color: #2f3441 transparent;
 }
 
 .pg-table-container::-webkit-scrollbar {
@@ -45,20 +46,10 @@
 ======================== */
 .pg-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse; /* ✅ Cambiado a collapse para evitar bugs de borders */
   background: #101a3a;
-  border-radius: 18px;
-
-  /* 🔧 CAMBIO CLAVE:
-     "fixed" repartía el ancho en partes iguales entre columnas,
-     sin importar su contenido. "auto" deja que cada columna
-     mida según lo que necesita, respetando los min-width de abajo. */
   table-layout: auto;
-
-  /* 🔧 Aseguramos un ancho mínimo total para que en pantallas
-     chicas no se aplaste todo: aparece scroll horizontal en su lugar. */
-  min-width: 980px;
+  min-width: 800px; /* ✅ Unificado para garantizar scroll horizontal */
 }
 
 /* ========================
@@ -67,65 +58,55 @@
 .pg-table th {
   text-align: left;
   vertical-align: middle;
-  padding: 18px 22px;
-  background: #252c3d;
+  padding: 16px 20px;
+  background: #1e293b;
   color: #94a3b8;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  white-space: nowrap;        /* ✅ evita que el header se parta en dos líneas */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
 }
-
-/* ========================
-   ESQUINAS REDONDEADAS
-======================== */
-.pg-table tr:first-child th:first-child { border-top-left-radius: 18px; }
-.pg-table tr:first-child th:last-child  { border-top-right-radius: 18px; }
-.pg-table tr:last-child td:first-child  { border-bottom-left-radius: 18px; }
-.pg-table tr:last-child td:last-child   { border-bottom-right-radius: 18px; }
 
 /* ========================
    CELDAS
 ======================== */
 .pg-table td {
-  padding: 18px 22px;
+  padding: 16px 20px;
   vertical-align: middle;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   color: #e5e7eb;
   font-size: 14px;
   font-weight: 500;
-
-  /* 🔧 CAMBIO CLAVE:
-     Quitamos el ellipsis por defecto en TODAS las celdas.
-     Antes esto cortaba "Coca Cola 1.5L" -> "Coca Cola 1."
-     Ahora cada celda muestra su contenido completo,
-     y el que necesite truncar usa .pg-table-truncate (ver abajo). */
   white-space: nowrap;
 }
 
-/* Columnas específicas: anchos mínimos según su contenido típico.
-   Ajusta el orden de nth-child si tu orden de columnas es distinto. */
-.pg-table th:nth-child(1),
-.pg-table td:nth-child(1) {
-  min-width: 170px;   /* PRODUCTO */
+.pg-table tbody tr:last-child td {
+  border-bottom: none;
 }
+
+.pg-table tbody tr {
+  transition: background-color 0.18s ease;
+}
+
+.pg-table tbody tr:hover {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+/* Anchos Mínimos por Columna */
+.pg-table th:nth-child(1),
+.pg-table td:nth-child(1) { min-width: 170px; }
 
 .pg-table th:nth-child(2),
-.pg-table td:nth-child(2) {
-  min-width: 220px;   /* DESCRIPCIÓN */
-  white-space: normal; /* permite wrap si es muy larga, en vez de cortar */
+.pg-table td:nth-child(2) { 
+  min-width: 220px; 
+  white-space: normal; 
 }
 
-.pg-table th:nth-child(9),
-.pg-table td:nth-child(9) {
-  min-width: 140px;   /* ACCIONES */
-}
+.pg-table th:last-child,
+.pg-table td:last-child { min-width: 120px; }
 
-/* Si en algún caso SÍ quieres truncar con "..." (por ejemplo,
-   una columna de notas larguísima), aplica esta clase manualmente
-   desde el JSX en vez de hacerlo global: */
 .pg-table-truncate {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -133,21 +114,62 @@
 }
 
 /* ========================
-   ÚLTIMA FILA
+   BUSCADOR (Adaptado a Dark Mode)
 ======================== */
-.pg-table tbody tr:last-child td {
-  border-bottom: none;
+.table-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 1.25rem 1.25rem 0.75rem;
+  max-width: 320px;
 }
 
-/* ========================
-   FILAS
-======================== */
-.pg-table tbody tr {
-  transition: background-color 0.18s ease;
+.table-search-icon {
+  position: absolute;
+  left: 12px;
+  color: #64748b;
+  pointer-events: none;
+  display: flex;
 }
 
-.pg-table tbody tr:hover {
-  background: rgba(99, 102, 241, 0.05);
+.table-search-input {
+  width: 100%;
+  padding: 0.6rem 2.25rem 0.6rem 2.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  font-size: 0.875rem;
+  color: #f3f4f6;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.table-search-input::placeholder {
+  color: #64748b;
+}
+
+.table-search-input:focus {
+  border-color: #6366f1;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.table-search-clear {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.table-search-clear:hover {
+  color: #f3f4f6;
 }
 
 /* ========================
@@ -163,7 +185,7 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  line-height: 1;             /* ✅ altura consistente */
+  line-height: 1;
   white-space: nowrap;
 }
 
@@ -180,14 +202,14 @@
 }
 
 /* ========================
-   ROL (ICONO + TEXTO)
+   ROL & ICONO
 ======================== */
 .pg-role {
   display: flex;
   align-items: center;
   gap: 12px;
   font-weight: 500;
-  min-width: 0;               /* ✅ permite que el texto haga ellipsis en flex */
+  min-width: 0;
 }
 
 .pg-role span {
@@ -196,13 +218,10 @@
   white-space: nowrap;
 }
 
-/* ========================
-   ICONO
-======================== */
 .pg-icon {
   width: 34px;
   height: 34px;
-  min-width: 34px;            /* ✅ no se comprime en flex */
+  min-width: 34px;
   border-radius: 10px;
   background: rgba(99, 102, 241, 0.12);
   display: flex;
@@ -216,12 +235,12 @@
 .pg-icon svg {
   width: 16px;
   height: 16px;
-  display: block;             /* ✅ elimina espacio fantasma */
+  display: block;
   flex-shrink: 0;
 }
 
 /* ========================
-   ACCIONES
+   ACCIONES & BOTONES
 ======================== */
 .pg-actions {
   display: flex;
@@ -229,17 +248,14 @@
   gap: 8px;
 }
 
-/* ========================
-   BOTONES DE ACCIÓN
-======================== */
 .pg-btn {
   width: 34px;
   height: 34px;
-  min-width: 34px;            /* ✅ tamaño fijo */
+  min-width: 34px;
   padding: 0;
   border-radius: 10px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   color: #9ca3af;
   display: flex;
   align-items: center;
@@ -247,33 +263,19 @@
   cursor: pointer;
   transition: all 0.18s ease;
   flex-shrink: 0;
-  line-height: 1;
 }
 
 .pg-btn svg {
   width: 15px;
   height: 15px;
-  display: block;             /* ✅ elimina espacio fantasma */
+  display: block;
   flex-shrink: 0;
 }
 
-/* ========================
-   ACCESIBILIDAD TECLADO
-======================== */
-.pg-btn:focus-visible,
-.pg-btn-new:focus-visible,
-.pagination-btn:focus-visible {
-  outline: 2px solid #4f46e5;
-  outline-offset: 2px;
-}
-
-/* ========================
-   HOVER BOTONES ACCIÓN
-======================== */
 .pg-btn:hover {
   transform: translateY(-1px);
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .pg-btn.edit:hover {
@@ -294,22 +296,20 @@
   background: rgba(248, 113, 113, 0.06);
 }
 
-.pg-btn:active {
-  transform: translateY(0);   /* ✅ feedback táctil */
+.pg-btn:active,
+.pg-btn-new:active {
+  transform: translateY(0);
 }
 
-/* ========================
-   BOTÓN NUEVO
-======================== */
 .pg-btn-new {
-  display: inline-flex;       /* ✅ inline-flex es más predecible que flex */
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  height: 46px;
-  padding: 0 22px;
+  height: 42px;
+  padding: 0 20px;
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
   background: #4f46e5;
   color: white;
   font-size: 14px;
@@ -317,15 +317,7 @@
   cursor: pointer;
   transition: all 0.18s ease;
   box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
-  white-space: nowrap;        /* ✅ el texto no se parte */
-  line-height: 1;
-}
-
-.pg-btn-new svg {
-  width: 16px;
-  height: 16px;
-  display: block;
-  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .pg-btn-new:hover {
@@ -334,17 +326,15 @@
   box-shadow: 0 12px 24px rgba(79, 70, 229, 0.32);
 }
 
-.pg-btn-new:active {
-  transform: translateY(0);
-}
-
-/* PAGINACIÓN */
+/* ========================
+   PAGINACIÓN
+======================== */
 .table-pagination {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  margin-top: 22px;
+  margin-top: 16px;
   flex-wrap: wrap;
   padding: 0 16px 20px;
 }
@@ -354,18 +344,15 @@
   height: 38px;
   min-width: 38px;
   padding: 0;
-  flex-shrink: 0;
-  box-sizing: border-box;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   color: #d1d5db;
   font-size: 14px;
   font-weight: 500;
-  line-height: 1;
   cursor: pointer;
   transition: all 0.18s ease;
 }
@@ -381,8 +368,8 @@
 }
 
 .pagination-btn:hover:not(:disabled):not(.active) {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
   color: #f3f4f6;
 }
 
@@ -392,14 +379,6 @@
   pointer-events: none;
 }
 
-.pagination-btn svg {
-  width: 16px;
-  height: 16px;
-  display: block;
-  flex-shrink: 0;
-}
-
-/* Puntos suspensivos */
 .pagination-dots {
   width: 38px;
   height: 38px;
@@ -408,29 +387,34 @@
   justify-content: center;
   color: #6b7280;
   font-size: 14px;
-  flex-shrink: 0;
   letter-spacing: 1px;
+}
+
+/* Accesibilidad teclado */
+.pg-btn:focus-visible,
+.pg-btn-new:focus-visible,
+.pagination-btn:focus-visible,
+.table-search-input:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
 }
 
 /* ========================
    RESPONSIVE
 ======================== */
 @media (max-width: 768px) {
-  .pg-table {
-    min-width: 780px;
-  }
-
   .pg-table th,
   .pg-table td {
-    padding: 14px 16px;
+    padding: 12px 14px;
+  }
+
+  .table-search {
+    max-width: 100%;
+    margin: 1rem;
   }
 
   .pg-btn-new {
     width: 100%;
-  }
-
-  .table-pagination {
-    gap: 4px;
   }
 
   .pagination-btn {

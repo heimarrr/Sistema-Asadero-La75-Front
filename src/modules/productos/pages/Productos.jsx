@@ -7,6 +7,8 @@ import usePagination from '@/hooks/usePagination'
 import '@/styles/global.css'
 import '@/styles/components/table.css'
 import '@/styles/components/modal.css'
+import useSearch from '@/hooks/useSearch' // 👈 NUEVO
+
 
 import {
   Plus,
@@ -28,6 +30,8 @@ import {
 import {
   getCategorias,
 } from '@/modules/categorias/services/categoriasService'
+
+const ProductosSearchKeys = ['nombre', 'descripcion', 'unidad_medida', 'tipo']
 
 function Productos() {
 
@@ -51,6 +55,12 @@ function Productos() {
 
   const [editando, setEditando] = useState(false)
   const [idActual, setIdActual] = useState(null)
+  const {
+      search,
+      setSearch,
+      filteredData: productosFiltrados,
+    } = useSearch(productos, ProductosSearchKeys)
+  
 
   // 👇 2. USAR EL HOOK sobre el array completo de productos
   const {
@@ -58,7 +68,12 @@ function Productos() {
     page,
     lastPage,
     onPageChange,
-  } = usePagination(productos, 10) // 10 productos por página, ajusta si quieres
+  } = usePagination(productosFiltrados, 10) // 10 productos por página, ajusta si quieres
+
+ const handleSearchChange = (value) => {
+    setSearch(value)
+    onPageChange(1)
+  }
 
   const LoadProductos = async () => {
 
@@ -394,6 +409,10 @@ function Productos() {
         page={page}                 // 👈 4. props de paginación
         lastPage={lastPage}
         onPageChange={onPageChange}
+        searchable
+        searchPlaceholder="Buscar..."
+        searchValue={search}
+        onSearchChange={handleSearchChange}
       />
 
       {/* MODAL */}

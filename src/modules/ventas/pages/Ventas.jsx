@@ -11,6 +11,13 @@ import VentaDetalleModal from '../components/VentaDetalleModal'
 import VentaDeleteModal from '../components/VentaDeleteModal'
 import { getVentas, getVenta, deleteVenta } from '../services/ventasService'
 import usePagination from '@/hooks/usePagination'
+import useSearch from '@/hooks/useSearch' // 👈 NUEVO
+
+const VENTAS_SEARCH_KEYS = [
+  'id_venta',
+  'fecha',
+  'usuario.nombre',
+]
 
 function Ventas() {
   const [ventas, setVentas] = useState([])
@@ -20,11 +27,16 @@ function Ventas() {
   const [modalEliminar, setModalEliminar] = useState(false)
 
   const {
+      search,
+      setSearch,
+      filteredData: ventasFiltradas,
+    } = useSearch(ventas, VENTAS_SEARCH_KEYS)
+  const {
     paginatedData: ventasPaginadas,
     page,
     lastPage,
     onPageChange,
-  } = usePagination(ventas, 10)
+  } = usePagination(ventasFiltradas, 10)
 
   const loadVentas = async () => {
     try {
@@ -33,6 +45,11 @@ function Ventas() {
     } catch {
       toast.error('Error al cargar ventas')
     }
+  }
+
+  const handleSearchChange = (value) => {
+    setSearch(value)
+    onPageChange(1)
   }
 
   useEffect(() => {
@@ -141,6 +158,10 @@ function Ventas() {
           page={page}
           lastPage={lastPage}
           onPageChange={onPageChange}
+          searchable
+          searchPlaceholder="Buscar..."
+          searchValue={search}
+          onSearchChange={handleSearchChange}
         />
 
         <VentaDetalleModal

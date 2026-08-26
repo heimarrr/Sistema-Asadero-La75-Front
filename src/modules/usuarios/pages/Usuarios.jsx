@@ -6,7 +6,8 @@ import '@/styles/components/modal.css'
 import Table from '@/components/ui/Table'
 import Modal from '@/components/ui/Modal'
 import UsuarioForm from '../components/UsuarioForm'
-import usePagination from '@/hooks/usePagination' // 👈 1. IMPORTAR EL HOOK
+import usePagination from '@/hooks/usePagination'
+import useSearch from '@/hooks/useSearch' // 👈 NUEVO
 import {
   getUsuarios,
   createUsuario,
@@ -15,7 +16,7 @@ import {
   toggleUsuarioEstado,
 } from '../services/usuariosService'
 
-import {getRoles,} from '@/modules/roles/services/rolesService'
+import { getRoles } from '@/modules/roles/services/rolesService'
 
 import {
   Plus,
@@ -26,8 +27,10 @@ import {
   Users,
 } from 'lucide-react'
 
-function Usuarios() {
+// Campos por los que se puede buscar en esta pantalla
+const USUARIOS_SEARCH_KEYS = ['nombre', 'usuario', 'correo']
 
+function Usuarios() {
   const [usuarios, setUsuarios] = useState([])
   const [roles, setRoles] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
@@ -45,53 +48,52 @@ function Usuarios() {
 
   const [idActual, setIdActual] = useState(null)
 
-   const {
+  // Búsqueda
+  const {
+    search,
+    setSearch,
+    filteredData: usuariosFiltrados,
+  } = useSearch(usuarios, USUARIOS_SEARCH_KEYS)
+
+  // Paginación (sobre los datos ya filtrados)
+  const {
     paginatedData: usuariosPaginados,
     page,
     lastPage,
     onPageChange,
-  } = usePagination(usuarios, 10)
+  } = usePagination(usuariosFiltrados, 10)
+
+  const handleSearchChange = (value) => {
+    setSearch(value)
+    onPageChange(1)
+  }
 
   const loadUsuarios = async () => {
-
     try {
-
-      const data = await getUsuarios(page)
+      const data = await getUsuarios()
 
       setUsuarios(data.data)
-
     } catch {
-
       toast.error('Error al cargar usuarios')
     }
   }
 
-
   const loadRoles = async () => {
-
     try {
-
       const data = await getRoles()
-      console.log("RESPUESTA ROLES:", data);
 
       setRoles(data)
-
     } catch {
-
       toast.error('Error al cargar roles')
     }
   }
 
-
   useEffect(() => {
-
     loadUsuarios()
     loadRoles()
-
-  }, [page])
+  }, [])
 
   const handleChange = (e) => {
-
     let value = e.target.value
 
     if (e.target.name === 'estado') {
@@ -113,10 +115,6 @@ function Usuarios() {
   // =========================
 
   const openCreate = () => {
-
-    console.log("roles =", roles);
-    console.log("es array =", Array.isArray(roles));
-
     setForm({
       nombre: '',
       usuario: '',
@@ -138,7 +136,6 @@ function Usuarios() {
   // =========================
 
   const openEdit = (user) => {
-
     setForm({
       nombre: user.nombre,
       usuario: user.usuario,
@@ -160,11 +157,9 @@ function Usuarios() {
   // =========================
 
   const handleSubmit = async (e) => {
-
     e.preventDefault()
 
     try {
-
       const dataToSend = { ...form }
 
       if (!dataToSend.contrasena) {
@@ -172,16 +167,10 @@ function Usuarios() {
       }
 
       if (editando) {
-
-        await updateUsuario(
-          idActual,
-          dataToSend
-        )
+        await updateUsuario(idActual, dataToSend)
 
         toast.success('Usuario actualizado')
-
       } else {
-
         await createUsuario(dataToSend)
 
         toast.success('Usuario creado')
@@ -190,13 +179,8 @@ function Usuarios() {
       setModalOpen(false)
 
       loadUsuarios()
-
     } catch (error) {
-
-      toast.error(
-        error.response?.data?.message ||
-        'Error en operación'
-      )
+      toast.error(error.response?.data?.message || 'Error en operación')
     }
   }
 
@@ -205,19 +189,15 @@ function Usuarios() {
   // =========================
 
   const handleDelete = async (id) => {
-
     if (!confirm('¿Eliminar usuario?')) return
 
     try {
-
       await deleteUsuario(id)
 
       toast.success('Usuario eliminado')
 
       loadUsuarios()
-
     } catch {
-
       toast.error('Error al eliminar')
     }
   }
@@ -227,17 +207,13 @@ function Usuarios() {
   // =========================
 
   const toggleEstado = async (id) => {
-
     try {
-
       await toggleUsuarioEstado(id)
 
       toast.success('Estado actualizado')
 
       loadUsuarios()
-
     } catch {
-
       toast.error('Error al cambiar estado')
     }
   }
@@ -247,19 +223,16 @@ function Usuarios() {
   // =========================
 
   const columns = [
-
     {
       header: 'Nombre',
 
       render: (u) => (
-        <div className='pg-role'>
-
-          <div className='pg-icon'>
+        <div className="pg-role">
+          <div className="pg-icon">
             <Users size={16} />
           </div>
 
           {u.nombre}
-
         </div>
       ),
     },
@@ -277,25 +250,15 @@ function Usuarios() {
     {
       header: 'Rol',
 
-      render: (u) =>
-        u.rol?.nombre || '-',
+      render: (u) => u.rol?.nombre || '-',
     },
 
     {
       header: 'Estado',
 
       render: (u) => (
-        <span
-          className={`pg-badge ${
-            u.estado
-              ? 'active'
-              : 'inactive'
-          }`}
-        >
-          {u.estado
-            ? 'Activo'
-            : 'Inactivo'
-          }
+        <span className={`pg-badge ${u.estado ? 'active' : 'inactive'}`}>
+          {u.estado ? 'Activo' : 'Inactivo'}
         </span>
       ),
     },
@@ -304,9 +267,7 @@ function Usuarios() {
       header: 'Acciones',
 
       render: (u) => (
-
         <div className="pg-actions">
-
           <button
             type="button"
             className="pg-btn edit"
@@ -318,58 +279,36 @@ function Usuarios() {
           <button
             type="button"
             className="pg-btn toggle"
-            onClick={() =>
-              toggleEstado(u.id_usuario)
-            }
+            onClick={() => toggleEstado(u.id_usuario)}
           >
-            {u.estado
-              ? <ToggleRight size={14} />
-              : <ToggleLeft size={14} />
-            }
+            {u.estado ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
           </button>
 
           <button
             type="button"
             className="pg-btn del"
-            onClick={() =>
-              handleDelete(u.id_usuario)
-            }
+            onClick={() => handleDelete(u.id_usuario)}
           >
             <Trash2 size={14} />
           </button>
-
         </div>
       ),
     },
   ]
 
   return (
-
     <div className="pg">
-
       <div className="pg-header">
-
         <div>
+          <h1 className="pg-title">Usuarios</h1>
 
-          <h1 className="pg-title">
-            Usuarios
-          </h1>
-
-          <p className="pg-sub">
-            {usuarios.length} usuarios
-          </p>
-
+          <p className="pg-sub">{usuarios.length} usuarios</p>
         </div>
 
-        <button
-          type="button"
-          className="pg-btn-new"
-          onClick={openCreate}
-        >
+        <button type="button" className="pg-btn-new" onClick={openCreate}>
           <Plus size={16} />
           Nuevo
         </button>
-
       </div>
 
       {/* TABLA */}
@@ -381,6 +320,10 @@ function Usuarios() {
         page={page}
         lastPage={lastPage}
         onPageChange={onPageChange}
+        searchable
+        searchPlaceholder="Buscar..."
+        searchValue={search}
+        onSearchChange={handleSearchChange}
       />
 
       {/* MODAL */}
@@ -388,26 +331,17 @@ function Usuarios() {
       <Modal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={
-          editando
-            ? 'Editar Usuario'
-            : 'Nuevo Usuario'
-        }
+        title={editando ? 'Editar Usuario' : 'Nuevo Usuario'}
       >
-
         <UsuarioForm
           form={form}
           roles={roles}
           handleChange={handleChange}
           handleSubmit={handleSubmit}
-          onClose={() =>
-            setModalOpen(false)
-          }
+          onClose={() => setModalOpen(false)}
           editando={editando}
         />
-
       </Modal>
-
     </div>
   )
 }

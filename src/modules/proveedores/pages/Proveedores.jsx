@@ -7,6 +7,7 @@ import '@/styles/components/table.css'
 import '@/styles/components/modal.css'
 import Table from '@/components/ui/Table'
 import usePagination from '@/hooks/usePagination'
+import useSearch from '@/hooks/useSearch' // 👈 NUEVO
 import {
   Plus,
   Pencil,
@@ -23,6 +24,8 @@ import {
   deleteProveedor,
   toggleProveedorEstado,
 } from '../services/proveedorService'
+
+const PROVEEDOR_SEARCH_KEYS = ['nombre', 'telefono', 'direccion', 'correo']
 
 function Proveedores() {
   const [proveedores, setProveedores] = useState([])
@@ -42,11 +45,22 @@ function Proveedores() {
   const [idActual, setIdActual] = useState(null)
 
   const {
+    search,
+    setSearch,
+    filteredData: proveedoresFiltrados,
+  } = useSearch(proveedores, PROVEEDOR_SEARCH_KEYS)
+
+  const {
     paginatedData: proveedoresPaginados,
     page,
     lastPage,
     onPageChange,
-  } = usePagination(proveedores, 10)
+  } = usePagination(proveedoresFiltrados, 10)
+
+  const handleSearchChange = (value) => {
+    setSearch(value)
+    onPageChange(1)
+  }
 
   const loadProveedores = async () => {
     try {
@@ -251,6 +265,10 @@ function Proveedores() {
         page={page} // 👈 4. props de paginación
         lastPage={lastPage}
         onPageChange={onPageChange}
+        searchable
+        searchPlaceholder="Buscar..."
+        searchValue={search}
+        onSearchChange={handleSearchChange}
       />
 
       {/* MODAL */}

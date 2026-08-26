@@ -1,20 +1,20 @@
 import api from '@/api/api'
 
-export const getUsuarios = async (page) => {
+export const getUsuarios = async () => {
 
-  const res = await api.get(`/usuarios?page=${page}`)
+  const res = await api.get('/usuarios')
 
   return res.data
 }
 
 export const createUsuario = async (data) => {
 
-  return await api.post('/usuarios',data)
+  return await api.post('/usuarios', data)
 }
 
 export const updateUsuario = async (id, data) => {
 
-  return await api.put(`/usuarios/${id}`,data)
+  return await api.put(`/usuarios/${id}`, data)
 }
 
 export const deleteUsuario = async (id) => {
@@ -24,7 +24,5 @@ export const deleteUsuario = async (id) => {
 
 export const toggleUsuarioEstado = async (id) => {
 
-  return await api.post(
-    `/usuarios/${id}/toggle-estado`
-  )
+  return await api.post(`/usuarios/${id}/toggle-estado`)
 }
