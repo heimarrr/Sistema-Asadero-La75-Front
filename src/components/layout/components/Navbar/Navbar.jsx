@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, LogOut } from "lucide-react";
+import { ChevronDown, LogOut, Download } from "lucide-react";
 import "./Navbar.css";
 
 // Mismo criterio que en el Sidebar: el rol se guarda como número en localStorage
@@ -29,6 +29,16 @@ export const Navbar = ({ logout }) => {
 
   const nombre = user?.nombre || "Usuario Anónimo";
   const correo = user?.correo || "sin-correo@correo.com";
+
+  // =========================================================
+  // ENLACE DEL APK
+  // =========================================================
+  // Cuando tengas el APK dentro del frontend, déjalo así:
+  // /apk/Asadero-La-75.apk
+  //
+  // Si posteriormente decides usar Google Drive, solamente
+  // reemplaza este valor por el enlace correspondiente.
+  const APK_URL = "/apk/Asadero-La-75.apk";
 
   // Cierra el menú al hacer clic fuera o al presionar Escape
   useEffect(() => {
@@ -114,6 +124,29 @@ export const Navbar = ({ logout }) => {
 
               <div className="nb-dd-sep" />
 
+              {/* =====================================================
+                  DESCARGAR APK
+              ====================================================== */}
+              <a
+                href={APK_URL}
+                download="Asadero-La-75.apk"
+                className="nb-dd-item"
+                role="menuitem"
+                onClick={closeDropdown}
+              >
+                <Download
+                  size={17}
+                  className="nb-dd-ico"
+                  aria-hidden="true"
+                />
+                Descargar aplicación móvil
+              </a>
+
+              <div className="nb-dd-sep" />
+
+              {/* =====================================================
+                  CERRAR SESIÓN
+              ====================================================== */}
               <button
                 type="button"
                 className="nb-dd-item danger"
@@ -133,3 +166,4 @@ export const Navbar = ({ logout }) => {
     </header>
   );
 };
+
