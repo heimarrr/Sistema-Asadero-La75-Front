@@ -10,7 +10,7 @@ import Table from '@/components/ui/Table'
 import VentaDetalleModal from '../components/VentaDetalleModal'
 import VentaDeleteModal from '../components/VentaDeleteModal'
 import { getVentas, getVenta, deleteVenta } from '../services/ventasService'
-import usePagination from '@/hooks/usePagination'
+import usePagination from '@/hooks/usePagination.jsx'
 import useSearch from '@/hooks/useSearch' // 👈 NUEVO
 
 const VENTAS_SEARCH_KEYS = [

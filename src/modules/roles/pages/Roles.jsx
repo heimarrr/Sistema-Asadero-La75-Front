@@ -5,7 +5,7 @@ import '@/styles/components/table.css'
 import '@/styles/components/modal.css'
 import Table from '@/components/ui/Table'
 import Modal from '../../../components/ui/Modal'
-import usePagination from '@/hooks/usePagination' // 👈 1. IMPORTAR EL HOOK
+import usePagination from '@/hooks/usePagination.jsx'
 import RolForm from '../components/RolForm'
 import useSearch from '@/hooks/useSearch' // 👈 NUEVO
 

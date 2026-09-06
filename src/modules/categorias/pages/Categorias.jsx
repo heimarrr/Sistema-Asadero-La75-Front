@@ -6,7 +6,7 @@ import '@/styles/components/modal.css'
 import Table from '@/components/ui/Table'
 import Modal from '../../../components/ui/Modal'
 import CategoriaForm from '../components/CategoriaForm'
-import usePagination from '@/hooks/usePagination'
+import usePagination from '@/hooks/usePagination.jsx'
 import useSearch from '@/hooks/useSearch' // 👈 NUEVO
 import {
   Plus,
